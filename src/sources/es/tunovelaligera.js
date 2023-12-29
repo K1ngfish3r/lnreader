@@ -2,14 +2,29 @@ import * as cheerio from 'cheerio';
 import { defaultCoverUri, Status } from '../helpers/constants';
 import { fetchHtml } from '@utils/fetch/fetch';
 import { showToast } from '@hooks/showToast';
+import { FilterInputs } from '../types/filterTypes';
 
 const sourceId = 23;
 const sourceName = 'TuNovelaLigera';
 
 const baseUrl = 'https://tunovelaligera.com/';
 
-const popularNovels = async page => {
-  let url = `${baseUrl}novelas/page/${page}/?m_orderby=views`;
+const popularNovels = (async page, { showLatestNovels, filters }) => {
+ let url = `${baseUrl}novelas/${
+    filters
+      ? 'series-finder'
+      : showLatestNovels
+      ? 'latest-series'
+      : 'new-manga'
+  }/`;
+
+  if (!filters) {
+    url += '?m_orderby=views';
+if (filters?.sort?.length) {
+    url += 'm_orderby=' + filters?.sort.join(',');
+  }
+ 
+ url += '/page/' + page
 
   const body = await fetchHtml({ url });
 
@@ -257,6 +272,21 @@ const searchNovels = async searchTerm => {
   return novels;
 };
 
+const = Filters [ 
+{
+    key: 'sort',
+    label: 'Sort',
+    values: [
+      { label: 'A-Z', value: 'alphabet' },
+      { label: 'Clasificacion', value: 'rating' },
+      { label: 'Hot', value: 'trending' },
+      { label: 'Mas visto', value: 'views' },
+      { label: 'Nuevo', value: 'new-manga' },
+      { label: 'Mas Nuevo', value: 'latest' },
+    ],
+    inputType: FilterInputs.Picker,
+},
+  ];
 const TuNovelaLigeraScraper = {
   popularNovels,
   parseNovelAndChapters,
