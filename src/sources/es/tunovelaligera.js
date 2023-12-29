@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 import { defaultCoverUri, Status } from '../helpers/constants';
 import { fetchHtml } from '@utils/fetch/fetch';
 import { showToast } from '@hooks/showToast';
+import { FilterInputs } from '../types/filterTypes';
 
 const sourceId = 23;
 const sourceName = 'TuNovelaLigera';
@@ -9,8 +10,12 @@ const sourceName = 'TuNovelaLigera';
 const baseUrl = 'https://tunovelaligera.com/';
 
 const popularNovels = async page => {
-  let url = `${baseUrl}novelas/page/${page}/?m_orderby=rating`;
+  let url = `${baseUrl}novelas/page/${page}/`;
 
+  url += '?m_orderby=' + (showLatestNovels ? 'latest' : filters?.sort || 'new-manga');
+
+  
+  url += '?m_orderby=' + (filters?.sort || 'hide');
   const body = await fetchHtml({ url });
 
   let loadedCheerio = cheerio.load(body);
@@ -509,6 +514,22 @@ const searchNovels = async searchTerm => {
 
     let novelUrl = loadedCheerio(this).find('.h4 > a').attr('href');
     novelUrl = novelUrl.replace(`${baseUrl}novelas/`, '');
+  
+   const = Filters [ 
+{
+    key: 'sort',
+    label: 'Clasificar por:',
+    values: [
+      { label: 'A-Z', value: 'alphabet' },
+      { label: 'Clasificacion', value: 'rating' },
+      { label: 'Hot', value: 'trending' },
+      { label: 'Mas visto', value: 'views' },
+      { label: 'Nuevo', value: 'new-manga' },
+      { label: 'Mas Nuevo', value: 'latest' },
+    ],
+    inputType: FilterInputs.Picker,
+    } 
+];
 
     const novel = {
       sourceId,
