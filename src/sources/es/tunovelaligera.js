@@ -12,19 +12,13 @@ const baseUrl = 'https://tunovelaligera.com/';
 const popularNovels = (async page, { showLatestNovels, filters }) => {
  let url = `${baseUrl}novelas/${
     filters
-      ? 'series-finder'
+      ? 'rating'
       : showLatestNovels
-      ? 'latest-series'
+      ? 'latest'
       : 'new-manga'
   }/`;
-
-  if (!filters) {
-    url += '?m_orderby=views';
-if (filters?.sort?.length) {
-    url += 'm_orderby=' + filters?.sort.join(',');
-  }
  
- url += 'page/' + page
+ url += '?m_orderby=' + defaultTo(filters?.sort, 'sdate');
 
   const body = await fetchHtml({ url });
 
