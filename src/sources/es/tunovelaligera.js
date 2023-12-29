@@ -257,11 +257,13 @@ const searchNovels = async searchTerm => {
   return novels;
 };
 
+
 const TuNovelaLigeraScraper = {
   popularNovels,
   parseNovelAndChapters,
   parseChapter,
   searchNovels,
+
 };
 
 export default TuNovelaLigeraScraper;
