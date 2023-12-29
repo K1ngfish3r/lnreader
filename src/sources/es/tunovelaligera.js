@@ -269,7 +269,7 @@ const Filters [
       { label: 'Mas Nuevo', value: 'latest' },
     ],
     inputType: FilterInputs.Picker,
-    } 
+    },
 ];
 
 const TuNovelaLigeraScraper = {
