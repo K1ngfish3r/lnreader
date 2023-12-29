@@ -529,7 +529,7 @@ const searchNovels = async searchTerm => {
     ],
     inputType: FilterInputs.Picker,
     } 
-];
+]
 
     const novel = {
       sourceId,
