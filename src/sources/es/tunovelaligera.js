@@ -515,7 +515,7 @@ const searchNovels = async searchTerm => {
     let novelUrl = loadedCheerio(this).find('.h4 > a').attr('href');
     novelUrl = novelUrl.replace(`${baseUrl}novelas/`, '');
   
-   const = Filters [ 
+ const = Filters[ 
 {
     key: 'sort',
     label: 'Clasificar por:',
