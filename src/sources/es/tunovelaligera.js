@@ -24,7 +24,7 @@ if (filters?.sort?.length) {
     url += 'm_orderby=' + filters?.sort.join(',');
   }
  
- url += '/page/' + page
+ url += 'page/' + page
 
   const body = await fetchHtml({ url });
 
