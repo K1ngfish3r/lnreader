@@ -9,7 +9,7 @@ const sourceName = 'TuNovelaLigera';
 
 const baseUrl = 'https://tunovelaligera.com/';
 
-const popularNovels = (async page, { showLatestNovels, filters }) => {
+const popularNovels = async (page, { showLatestNovels, filters }) => {
  let url = `${baseUrl}novelas/${
     filters
       ? 'rating'
