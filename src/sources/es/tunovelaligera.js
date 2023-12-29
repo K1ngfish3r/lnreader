@@ -256,12 +256,28 @@ const searchNovels = async searchTerm => {
 
   return novels;
 };
+const Filters [ 
+{
+    key: 'sort',
+    label: 'Clasificar por:',
+    values: [
+      { label: 'A-Z', value: 'alphabet' },
+      { label: 'Clasificacion', value: 'rating' },
+      { label: 'Hot', value: 'trending' },
+      { label: 'Mas visto', value: 'views' },
+      { label: 'Nuevo', value: 'new-manga' },
+      { label: 'Mas Nuevo', value: 'latest' },
+    ],
+    inputType: FilterInputs.Picker,
+    } 
+];
 
 const TuNovelaLigeraScraper = {
   popularNovels,
   parseNovelAndChapters,
   parseChapter,
   searchNovels,
+  Filters,
 };
 
 export default TuNovelaLigeraScraper;
