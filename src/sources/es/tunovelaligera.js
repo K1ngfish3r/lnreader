@@ -12,10 +12,17 @@ const baseUrl = 'https://tunovelaligera.com/';
 const popularNovels = async page => {
   let url = `${baseUrl}novelas/page/${page}/`;
 
-  url += '?m_orderby=' + (showLatestNovels ? 'latest' : filters?.sort || 'new-manga');
+  url += '&genre=' + filters.genre;
+  }
 
-  
-  url += '?m_orderby=' + (filters?.sort || 'hide');
+  url +=
+    '&sorting=' + (showLatestNovels ? 'recent' : filters?.sort || 'popular');
+
+  url += '&form=' + (filters?.form || 'any');
+  url += '&state=' + (filters?.state || 'any');
+  url += '&series=' + (filters?.series || 'any');
+  url += '&access=' + (filters?.access || 'any');
+  url += '&promo=' + (filters?.promo || 'hide');
   const body = await fetchHtml({ url });
 
   let loadedCheerio = cheerio.load(body);
@@ -515,21 +522,148 @@ const searchNovels = async searchTerm => {
     let novelUrl = loadedCheerio(this).find('.h4 > a').attr('href');
     novelUrl = novelUrl.replace(`${baseUrl}novelas/`, '');
   
- const = Filters[ 
-{
+const filters = [
+  {
     key: 'sort',
-    label: 'Clasificar por:',
+    label: 'Сортировка',
     values: [
-      { label: 'A-Z', value: 'alphabet' },
-      { label: 'Clasificacion', value: 'rating' },
-      { label: 'Hot', value: 'trending' },
-      { label: 'Mas visto', value: 'views' },
-      { label: 'Nuevo', value: 'new-manga' },
-      { label: 'Mas Nuevo', value: 'latest' },
+      { label: 'По популярности', value: 'popular' },
+      { label: 'По количеству лайков', value: 'likes' },
+      { label: 'По комментариям', value: 'comments' },
+      { label: 'По новизне', value: 'recent' },
+      { label: 'По просмотрам', value: 'views' },
+      { label: 'Набирающие популярность', value: 'trending' },
     ],
     inputType: FilterInputs.Picker,
-    } 
-]
+  },
+  {
+    key: 'genre',
+    label: 'Жанры',
+    values: [
+      { label: 'Альтернативная история', value: 'sf-history' },
+      { label: 'Антиутопия', value: 'dystopia' },
+      { label: 'Бизнес-литература', value: 'biznes-literatura' },
+      { label: 'Боевая фантастика', value: 'sf-action' },
+      { label: 'Боевик', value: 'action' },
+      { label: 'Боевое фэнтези', value: 'fantasy-action' },
+      { label: 'Бояръ-Аниме', value: 'boyar-anime' },
+      { label: 'Героическая фантастика', value: 'sf-heroic' },
+      { label: 'Героическое фэнтези', value: 'heroic-fantasy' },
+      { label: 'Городское фэнтези', value: 'urban-fantasy' },
+      { label: 'Детектив', value: 'detective' },
+      { label: 'Детская литература', value: 'detskaya-literatura' },
+      { label: 'Документальная проза', value: 'non-fiction' },
+      { label: 'Историческая проза', value: 'historical-fiction' },
+      { label: 'Исторические приключения', value: 'historical-adventure' },
+      { label: 'Исторический детектив', value: 'historical-mystery' },
+      { label: 'Исторический любовный роман', value: 'historical-romance' },
+      { label: 'Историческое фэнтези', value: 'historical-fantasy' },
+      { label: 'Киберпанк', value: 'cyberpunk' },
+      { label: 'Короткий любовный роман', value: 'short-romance' },
+      { label: 'Космическая фантастика', value: 'sf-space' },
+      { label: 'ЛитРПГ', value: 'litrpg' },
+      { label: 'Любовное фэнтези', value: 'love-fantasy' },
+      { label: 'Любовные романы', value: 'romance' },
+      { label: 'Мистика', value: 'paranormal' },
+      { label: 'Назад в СССР', value: 'back-to-ussr' },
+      { label: 'Научная фантастика', value: 'science-fiction' },
+      { label: 'Подростковая проза', value: 'teen-prose' },
+      { label: 'Политический роман', value: 'political-fiction' },
+      { label: 'Попаданцы', value: 'popadantsy' },
+      { label: 'Попаданцы в космос', value: 'popadantsy-v-kosmos' },
+      {
+        label: 'Попаданцы в магические миры',
+        value: 'popadantsy-v-magicheskie-miry',
+      },
+      { label: 'Попаданцы во времени', value: 'popadantsy-vo-vremeni' },
+      { label: 'Постапокалипсис', value: 'postapocalyptic' },
+      { label: 'Поэзия', value: 'poetry' },
+      { label: 'Приключения', value: 'adventure' },
+      { label: 'Публицистика', value: 'publicism' },
+      { label: 'Развитие личности', value: 'razvitie-lichnosti' },
+      { label: 'Разное', value: 'other' },
+      { label: 'РеалРПГ', value: 'realrpg' },
+      { label: 'Романтическая эротика', value: 'romantic-erotika' },
+      { label: 'Сказка', value: 'fairy-tale' },
+      { label: 'Современная проза', value: 'modern-prose' },
+      { label: 'Современный любовный роман', value: 'contemporary-romance' },
+      { label: 'Социальная фантастика', value: 'sf-social' },
+      { label: 'Стимпанк', value: 'steampunk' },
+      { label: 'Темное фэнтези', value: 'dark-fantasy' },
+      { label: 'Триллер', value: 'thriller' },
+      { label: 'Ужасы', value: 'horror' },
+      { label: 'Фантастика', value: 'sci-fi' },
+      { label: 'Фантастический детектив', value: 'detective-science-fiction' },
+      { label: 'Фанфик', value: 'fanfiction' },
+      { label: 'Фэнтези', value: 'fantasy' },
+      { label: 'Шпионский детектив', value: 'spy-mystery' },
+      { label: 'Эпическое фэнтези', value: 'epic-fantasy' },
+      { label: 'Эротика', value: 'erotica' },
+      { label: 'Эротическая фантастика', value: 'sf-erotika' },
+      { label: 'Эротический фанфик', value: 'fanfiction-erotika' },
+      { label: 'Эротическое фэнтези', value: 'fantasy-erotika' },
+      { label: 'Юмор', value: 'humor' },
+      { label: 'Юмористическая фантастика', value: 'sf-humor' },
+      { label: 'Юмористическое фэнтези', value: 'ironical-fantasy' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+  {
+    key: 'form',
+    label: 'Форма произведения',
+    values: [
+      { label: 'Любой', value: 'any' },
+      { label: 'Перевод', value: 'translation' },
+      { label: 'Повесть', value: 'tale' },
+      { label: 'Рассказ', value: 'story' },
+      { label: 'Роман', value: 'novel' },
+      { label: 'Сборник поэзии', value: 'poetry' },
+      { label: 'Сборник рассказов', value: 'story-book' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+  {
+    key: 'state',
+    label: 'Статус произведения',
+    values: [
+      { label: 'Любой статус', value: 'any' },
+      { label: 'В процессе', value: 'in-progress' },
+      { label: 'Завершено', value: 'finished' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+  {
+    key: 'series',
+    label: 'Статус цикла',
+    values: [
+      { label: 'Не важно', value: 'any' },
+      { label: 'Вне цикла', value: 'out' },
+      { label: 'Цикл завершен', value: 'finished' },
+      { label: 'Цикл не завершен', value: 'unfinished' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+  {
+    key: 'access',
+    label: 'Тип доступа',
+    values: [
+      { label: 'Любой', value: 'any' },
+      { label: 'Платный', value: 'paid' },
+      { label: 'Бесплатный', value: 'free' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+  {
+    key: 'promo',
+    label: 'Промо-фрагмент',
+    values: [
+      { label: 'Скрывать', value: 'hide' },
+      { label: 'Показывать', value: 'show' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+];
+
 
     const novel = {
       sourceId,
