@@ -259,12 +259,26 @@ const searchNovels = async searchTerm => {
 
   return novels;
 };
+const filters = [
+  {
+    key: 'sort',
+    label: 'Buscar Por:',
+    values: [
+      { label: 'Hot', value: '' },
+      { label: 'Vistas', value: 'views' },
+      { label: 'Clasificacion', value: 'rating' },
+      { label: 'Ultimas', value: 'latest' },
+    ],
+    inputType: FilterInputs.Picker,
+  },
+];
 
 const TuNovelaLigeraScraper = {
   popularNovels,
   parseNovelAndChapters,
   parseChapter,
   searchNovels,
+  filters,
 };
 
 export default TuNovelaLigeraScraper;
