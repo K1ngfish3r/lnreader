@@ -10,8 +10,7 @@ const baseUrl = 'https://tunovelaligera.com/';
 
 const popularNovels = async page => {
   let url = `${baseUrl}novelas/?m_orderby=`;
-  
-url += showLatestNovels ? 'new-manga' : filters?.sort || 'views';
+  url += showLatestNovels ? 'new-manga' : filters?.sort || 'views';
   url += 'page' + page;
   
   const body = await fetchHtml({ url });
