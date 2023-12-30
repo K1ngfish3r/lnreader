@@ -12,7 +12,7 @@ const popularNovels = async page => {
   let url = `${baseUrl}novelas/?m_orderby=`;
   url += showLatestNovels ? 'new-manga' : filters?.sort || 'views';
   url += 'page' + page;
-  
+
   const body = await fetchHtml({ url });
 
   let loadedCheerio = cheerio.load(body);
