@@ -108,6 +108,7 @@ import RainOfSnowScraper from './en/rainofsnow';
 import ReaperScansBrScraper from './br/ReaperScansBr';
 import ArthurScansScraper from './br/ArthurScans';
 import IdMtlNovelScraper from './id/idmtlnovel';
+import EsmtlNovelScraper from './es/esmtlnovel';
 import WoopReadScraper from './en/woopread';
 import MTLReaderScraper from './en/mtlreader';
 import MyLoveNovelScraper from './en/mylovenovel';
