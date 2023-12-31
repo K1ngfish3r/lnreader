@@ -22,5 +22,5 @@ export const LightNovelsBrasilScraper = new WPMangaStreamScraper(
 export const LiebeSchneeHiverNovelScraper = new WPMangaStreamScraper(
   '171',
   'https://tunovelaligera.com/',
-  'Tu Novela Ligera'
+  'Tu Novela Ligera',
 );
