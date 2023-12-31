@@ -262,7 +262,7 @@ const searchNovels = async searchTerm => {
 };
 
 const filters = [
-{
+  {
     key: 'sort',
     label: 'Clasificar por:',
     values: [
@@ -274,7 +274,7 @@ const filters = [
       { label: 'Mas Nuevo', value: 'latest' },
     ],
     inputType: FilterInputs.Picker,
- },
+  },
   {
     key: 'genres',
     label: 'Generos',
