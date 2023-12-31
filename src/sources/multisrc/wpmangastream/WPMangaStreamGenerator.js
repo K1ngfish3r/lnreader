@@ -39,7 +39,6 @@ export const LightNovelsBrasilScraper = new WPMangaStreamScraper(
   'Light Novels Brasil',
 );
 
-
 export const TuNovelaLigeraScraper = new WPMangaStreamScraper(
   '171',
   'https://tunovelaligera.com/',
