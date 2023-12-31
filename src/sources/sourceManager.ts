@@ -108,6 +108,7 @@ import RainOfSnowScraper from './en/rainofsnow';
 import ReaperScansBrScraper from './br/ReaperScansBr';
 import ArthurScansScraper from './br/ArthurScans';
 import IdMtlNovelScraper from './id/idmtlnovel';
+import EsmtlNovelScraper from './es/esmtlnovel';
 import WoopReadScraper from './en/woopread';
 import MTLReaderScraper from './en/mtlreader';
 import MyLoveNovelScraper from './en/mylovenovel';
@@ -340,6 +341,7 @@ export const sourceManager = (sourceId: number): Scraper => {
     168: LitSpaceScraper, // @ts-ignore
     169: AsuraLightNovelScraper, // @ts-ignore
     170: ICantReadJPTLScraper, // @ts-ignore
+    171: EsmtlNovelScraper, // @ts-ignore
   };
 
   return scrapers[sourceId];
