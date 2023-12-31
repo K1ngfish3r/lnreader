@@ -11,9 +11,9 @@ const baseUrl = 'https://tunovelaligera.com/';
 
 const popularNovels = async page => {
   let url = `${baseUrl}`;
-  url += (filters?.genres ? `genero/` + filters.genres : 'novelas');
+  url += filters?.genres ? `genero/` + filters.genres : 'novelas';
   url += `/page/${page}`;
-  url += (filters?.order ? filters.order : '?m_orderby=views');
+  url += filters?.order ? filters.order : '?m_orderby=views';
 
   const body = await fetchHtml({ url });
 
