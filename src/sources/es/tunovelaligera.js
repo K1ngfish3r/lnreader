@@ -9,8 +9,7 @@ const sourceName = 'TuNovelaLigera';
 const baseUrl = 'https://tunovelaligera.com/';
 
 const popularNovels = async page => {
-  let url = `${baseUrl}novelas/?m_orderby=`;
-  url += showLatestNovels ? 'new-manga' : 'views';
+  let url = `${baseUrl}novelas/page/${page}/?m_orderby=views`;
 
   const body = await fetchHtml({ url });
 
@@ -257,26 +256,12 @@ const searchNovels = async searchTerm => {
 
   return novels;
 };
-const filters = [
-  {
-    key: 'sort',
-    label: 'Buscar Por:',
-    values: [
-      { label: 'Hot', value: '' },
-      { label: 'Vistas', value: 'views' },
-      { label: 'Clasificacion', value: 'rating' },
-      { label: 'Ultimas', value: 'latest' },
-    ],
-    inputType: FilterInputs.Picker,
-  },
-];
 
 const TuNovelaLigeraScraper = {
   popularNovels,
   parseNovelAndChapters,
   parseChapter,
   searchNovels,
-  filters,
 };
 
 export default TuNovelaLigeraScraper;
