@@ -261,7 +261,7 @@ const searchNovels = async searchTerm => {
   return novels;
 };
 
-const filters = [ 
+const filters = [
 {
     key: 'sort',
     label: 'Clasificar por:',
@@ -276,8 +276,8 @@ const filters = [
     inputType: FilterInputs.Picker,
  },
   {
-    key: "genres",
-    label: "Generos",
+    key: 'genres',
+    label: 'Generos',
     values: [
       { label: 'Acción', value: 'accion' },
       { label: 'Adulto', value: 'adulto' },
@@ -288,7 +288,7 @@ const filters = [
       { label: 'Deportes', value: 'deportes' },
       { label: 'Drama', value: 'drama' },
       { label: 'Eastern Fantasy', value: 'eastern-fantasy' },
-      { label: 'Ecchi', value: "ecchi" },
+      { label: 'Ecchi', value: 'ecchi' },
       { label: 'FanFiction', value: 'fan-fiction' },
       { label: 'Fantasía', value: 'fantasia' },
       { label: 'Fantasía oriental', value: 'fantasia-oriental' },
