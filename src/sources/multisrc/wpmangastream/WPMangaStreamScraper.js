@@ -7,6 +7,7 @@ class WPMangaStreamScraper {
     this.sourceName = sourceName;
     this.language = options?.language;
     this.reverseChapters = options?.reverseChapters;
+    this.filters = filter || null;
   }
 
   async popularNovels(page) {
