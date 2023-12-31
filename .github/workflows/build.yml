@@ -1,43 +1,52 @@
-name: Build App
-
+name: build
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
 jobs:
   build-android:
     name: Build App
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2 # Use the latest version of this action
+      - name: Clone Repository (Latest)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '12.x''13.x''14.x''15.x''16.x'
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile # Use the --frozen-lockfile option
-      - name: Cache Node.js modules
-        uses: actions/cache@v2 # Use this action to cache dependencies
+        run: |
+          npm install
+
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v3
         with:
-          # cache yarn cache
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Build App
-        run: yarn android:build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2 # Use this action to upload the apk file
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Make Gradlew Executable
+        run: cd android && chmod +x ./gradlew
+
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleRelease --no-daemon
+
+      - name: Set Env
+        run: |
+          set -x
+          echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
         with:
-          name: app-release.apk
+          name: LNReader-r${{ env.COMMIT_COUNT }}
           path: android/app/build/outputs/apk/release/app-release.apk
-      - name: Comment PR
-        uses: actions/github-script@v5 # Use this action to create a comment with the artifact link
-        with:
-          script: |
-            const artifactUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Aquí está el apk generado por este pull request: app-release.apk`
-            })
