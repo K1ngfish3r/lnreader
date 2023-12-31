@@ -14,7 +14,7 @@ const popularNovels = async page => {
   url += (filters?.genres ? `genero/` + filters.genres : "novelas");
   url += `/page/${page}`;
   url += (filters?.order ? filters.order : "?m_orderby=views")
-  
+
   const body = await fetchHtml({ url });
 
   let loadedCheerio = cheerio.load(body);
