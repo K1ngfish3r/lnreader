@@ -26,7 +26,13 @@ jobs:
           key: ${{ runner.os }}-cache-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-cache-npm-
-    
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 21
+          distribution: "temurin"
+
       - name: Install Dependencies
         run: |
           npm install
