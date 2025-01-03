@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - new_arch
 jobs:
   build-android:
     name: Build App
