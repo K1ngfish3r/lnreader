@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { NativeEventEmitter, NativeModules, StatusBar } from 'react-native';
 import WebView from 'react-native-webview';
 import color from 'color';
@@ -55,78 +55,104 @@ const assetsUriPrefix = __DEV__
   ? 'http://localhost:8081/assets'
   : 'file:///android_asset';
 
-const WebViewReader: React.FC<WebViewReaderProps> = ({
-  html,
-  webViewRef,
-  nextChapter,
-  saveProgress,
-  onPress,
-  navigateChapter,
-}) => {
-  const { novel, chapter } = useChapterContext();
-  const theme = useTheme();
-  const readerSettings = useMemo(
-    () =>
-      getMMKVObject<ChapterReaderSettings>(CHAPTER_READER_SETTINGS) ||
-      initialChapterReaderSettings,
-    [],
-  );
-  const chapterGeneralSettings = useMemo(
-    () =>
-      getMMKVObject<ChapterGeneralSettings>(CHAPTER_GENERAL_SETTINGS) ||
-      initialChapterGeneralSettings,
-    [],
-  );
-  const batteryLevel = useMemo(getBatteryLevelSync, []);
-  const plugin = getPlugin(novel?.pluginId);
-  const pluginCustomJS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.js`;
-  const pluginCustomCSS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.css`;
-
-  useEffect(() => {
-    const mmkvListener = MMKVStorage.addOnValueChangedListener(key => {
-      switch (key) {
-        case CHAPTER_READER_SETTINGS:
-          webViewRef.current?.injectJavaScript(
-            `reader.readerSettings.val = ${MMKVStorage.getString(
-              CHAPTER_READER_SETTINGS,
-            )}`,
-          );
-          break;
-        case CHAPTER_GENERAL_SETTINGS:
-          webViewRef.current?.injectJavaScript(
-            `reader.generalSettings.val = ${MMKVStorage.getString(
-              CHAPTER_GENERAL_SETTINGS,
-            )}`,
-          );
-          break;
-      }
-    });
-
-    const subscription = deviceInfoEmitter.addListener(
-      'RNDeviceInfo_batteryLevelDidChange',
-      (level: number) => {
-        webViewRef.current?.injectJavaScript(
-          `reader.batteryLevel.val = ${level}`,
-        );
-      },
+const WebViewReader: React.FC<WebViewReaderProps> = React.memo(
+  ({
+    html,
+    webViewRef,
+    nextChapter,
+    saveProgress,
+    onPress,
+    navigateChapter,
+  }) => {
+    const { novel, chapter } = useChapterContext();
+    const theme = useTheme();
+    const readerSettings = useMemo(
+      () =>
+        getMMKVObject<ChapterReaderSettings>(CHAPTER_READER_SETTINGS) ||
+        initialChapterReaderSettings,
+      [],
     );
+    const chapterGeneralSettings = useMemo(
+      () =>
+        getMMKVObject<ChapterGeneralSettings>(CHAPTER_GENERAL_SETTINGS) ||
+        initialChapterGeneralSettings,
+      [],
+    );
+    const batteryLevel = useMemo(getBatteryLevelSync, []);
+    const plugin = getPlugin(novel?.pluginId);
+    const pluginCustomJS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.js`;
+    const pluginCustomCSS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.css`;
 
-    return () => {
-      subscription.remove();
-      mmkvListener.remove();
-    };
-  }, []);
+    // Logic to set initial rtlMode based on plugin language if not explicitly set
+    useEffect(() => {
+      const pluginId = plugin?.id;
+      const pluginLang = plugin?.lang;
 
-  return (
-    <WebView
-      ref={webViewRef}
-      style={{ backgroundColor: readerSettings.theme }}
-      allowFileAccess={true}
-      originWhitelist={['*']}
-      scalesPageToFit={true}
-      showsVerticalScrollIndicator={false}
-      javaScriptEnabled={true}
-      onMessage={(ev: { nativeEvent: { data: string } }) => {
+      if (!pluginId || !pluginLang) {
+        return;
+      }
+
+      const RTL_INITIAL_SET_KEY = `RTL_INITIAL_SET_${pluginId}`;
+      // Check if initial setting was already done for this plugin
+      if (MMKVStorage.getBoolean(RTL_INITIAL_SET_KEY)) {
+        return;
+      }
+
+      const rtlLanguages = ['ar', 'he', 'fa'];
+      const isRtlLanguage = rtlLanguages.includes(pluginLang);
+
+      const currentSettings =
+        getMMKVObject<ChapterGeneralSettings>(CHAPTER_GENERAL_SETTINGS) ||
+        initialChapterGeneralSettings;
+
+      MMKVStorage.set(
+        CHAPTER_GENERAL_SETTINGS,
+        JSON.stringify({
+          ...currentSettings,
+          rtlMode: isRtlLanguage,
+        }),
+      );
+
+      MMKVStorage.set(RTL_INITIAL_SET_KEY, true);
+    }, [plugin?.id, plugin?.lang]);
+
+    useEffect(() => {
+      const mmkvListener = MMKVStorage.addOnValueChangedListener(key => {
+        switch (key) {
+          case CHAPTER_READER_SETTINGS:
+            webViewRef.current?.injectJavaScript(
+              `reader.readerSettings.val = ${MMKVStorage.getString(
+                CHAPTER_READER_SETTINGS,
+              )}`,
+            );
+            break;
+          case CHAPTER_GENERAL_SETTINGS:
+            webViewRef.current?.injectJavaScript(
+              `reader.generalSettings.val = ${MMKVStorage.getString(
+                CHAPTER_GENERAL_SETTINGS,
+              )}`,
+            );
+            break;
+        }
+      });
+
+      const subscription = deviceInfoEmitter.addListener(
+        'RNDeviceInfo_batteryLevelDidChange',
+        (level: number) => {
+          webViewRef.current?.injectJavaScript(
+            `reader.batteryLevel.val = ${level}`,
+          );
+        },
+      );
+
+      return () => {
+        subscription.remove();
+        mmkvListener.remove();
+      };
+    }, []);
+
+    const onMessage = useCallback(
+      (ev: { nativeEvent: { data: string } }) => {
         __DEV__ && onLogMessage(ev);
         const event: WebViewPostEvent = JSON.parse(ev.nativeEvent.data);
         switch (event.type) {
@@ -162,13 +188,34 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
             Speech.stop();
             break;
         }
-      }}
-      source={{
-        baseUrl: !chapter.isDownloaded ? plugin?.site : undefined,
-        headers: plugin?.imageRequestInit?.headers,
-        method: plugin?.imageRequestInit?.method,
-        body: plugin?.imageRequestInit?.body,
-        html: `
+      },
+      [
+        webViewRef,
+        onPress,
+        navigateChapter,
+        saveProgress,
+        readerSettings.tts?.voice?.identifier,
+        readerSettings.tts?.pitch,
+        readerSettings.tts?.rate,
+      ], // Dependencies for useCallback
+    );
+
+    return (
+      <WebView
+        ref={webViewRef}
+        style={{ backgroundColor: readerSettings.theme }}
+        allowFileAccess={true}
+        originWhitelist={['*']}
+        scalesPageToFit={true}
+        showsVerticalScrollIndicator={false}
+        javaScriptEnabled={true}
+        onMessage={onMessage}
+        source={{
+          baseUrl: !chapter.isDownloaded ? plugin?.site : undefined,
+          headers: plugin?.imageRequestInit?.headers,
+          method: plugin?.imageRequestInit?.method,
+          body: plugin?.imageRequestInit?.body,
+          html: `
         <!DOCTYPE html>
           <html>
             <head>
@@ -199,6 +246,9 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
                 --theme-onSurfaceVariant: ${theme.onSurfaceVariant};
                 --theme-outline: ${theme.outline};
                 --theme-rippleColor: ${theme.rippleColor};
+                }
+                body {
+                  direction: ${chapterGeneralSettings.rtlMode ? 'rtl' : 'ltr'};
                 }
                 
                 @font-face {
@@ -252,9 +302,10 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
               </script>
           </html>
           `,
-      }}
-    />
-  );
-};
+        }}
+      />
+    );
+  },
+);
 
 export default WebViewReader;

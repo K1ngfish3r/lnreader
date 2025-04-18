@@ -57,6 +57,7 @@ const GeneralTab: React.FC = () => {
     removeExtraParagraphSpacing,
     bionicReading,
     tapToScroll = false,
+    rtlMode = false,
     setChapterGeneralSettings,
   } = useChapterGeneralSettings();
 
@@ -154,6 +155,12 @@ const GeneralTab: React.FC = () => {
           setChapterGeneralSettings({ keepScreenOn: !keepScreenOn })
         }
         value={keepScreenOn}
+        theme={theme}
+      />
+      <ReaderSheetPreferenceItem
+        label={getString('readerScreen.bottomSheet.rtlMode')}
+        onPress={() => setChapterGeneralSettings({ rtlMode: !rtlMode })}
+        value={rtlMode}
         theme={theme}
       />
     </BottomSheetScrollView>

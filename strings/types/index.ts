@@ -346,6 +346,7 @@ export interface StringMap {
   'readerScreen.bottomSheet.verticalSeekbar': 'string';
   'readerScreen.bottomSheet.keepScreenOn': 'string';
   'readerScreen.bottomSheet.volumeButtonsScroll': 'string';
+  'readerScreen.bottomSheet.rtlMode': 'string';
   'readerScreen.drawer.scrollToBottom': 'string';
   'readerScreen.drawer.scrollToCurrentChapter': 'string';
   'readerScreen.drawer.scrollToTop': 'string';
