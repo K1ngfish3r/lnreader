@@ -68,7 +68,7 @@ const ChapterFooter = ({
             android_ripple={rippleConfig}
             style={styles.buttonStyles}
             onPress={() =>
-              navigation.navigate('WebviewScreen', {
+              navigation.getParent()?.navigate('WebviewScreen', {
                 name: novel.name,
                 url: chapter.path,
                 pluginId: novel.pluginId,

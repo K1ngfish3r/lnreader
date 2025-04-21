@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "noUnusedLocals": true,
     "module": "ES2022",
+    "types": ["react-native"],
     "paths": {
       "@components": [
         "src/components/index"
