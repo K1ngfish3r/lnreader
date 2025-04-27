@@ -120,19 +120,19 @@ function updateToDBVersion1() {
       );
       `);
       db.runSync(`UPDATE Novel
-SET chaptersUnread = (
-    SELECT COUNT(*)
-    FROM Chapter
-    WHERE Chapter.novelId = Novel.id AND Chapter.unread = 1
-);
-`);
+      SET chaptersUnread = (
+          SELECT COUNT(*)
+          FROM Chapter
+          WHERE Chapter.novelId = Novel.id AND Chapter.unread = 1
+      );
+      `);
       db.runSync(`UPDATE Novel
-SET totalChapters = (
-    SELECT COUNT(*)
-    FROM Chapter
-    WHERE Chapter.novelId = Novel.id
-);
-`);
+      SET totalChapters = (
+          SELECT COUNT(*)
+          FROM Chapter
+          WHERE Chapter.novelId = Novel.id
+      );
+      `);
       db.runSync(`UPDATE Novel
       SET lastReadAt = (
           SELECT MAX(readTime)
