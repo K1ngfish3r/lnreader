@@ -245,6 +245,29 @@ export default function useChapter(
     ],
   );
 
+  const searchChapterText = useCallback(
+    (text: string) => {
+      webViewRef.current?.injectJavaScript(
+        `window.readerSearch?.search(${JSON.stringify(text)}); true;`,
+      );
+    },
+    [webViewRef],
+  );
+
+  const clearChapterSearch = useCallback(() => {
+    webViewRef.current?.injectJavaScript('window.readerSearch?.clear(); true;');
+  }, [webViewRef]);
+
+  const navigateChapterSearch = useCallback(
+    (direction: 'NEXT' | 'PREV', text: string) => {
+      const method = direction === 'NEXT' ? 'next' : 'previous';
+      webViewRef.current?.injectJavaScript(
+        `window.readerSearch?.${method}(${JSON.stringify(text)}); true;`,
+      );
+    },
+    [webViewRef],
+  );
+
   const scrollInterval = useRef<NodeJS.Timeout>(null);
   useEffect(() => {
     if (autoScroll) {
@@ -371,6 +394,9 @@ export default function useChapter(
       saveProgress,
       hideHeader,
       navigateChapter,
+      navigateChapterSearch,
+      searchChapterText,
+      clearChapterSearch,
       refetch,
       setChapter,
       setLoading,
@@ -388,6 +414,9 @@ export default function useChapter(
       saveProgress,
       hideHeader,
       navigateChapter,
+      navigateChapterSearch,
+      searchChapterText,
+      clearChapterSearch,
       refetch,
       setChapter,
       setLoading,

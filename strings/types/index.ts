@@ -242,6 +242,10 @@ export interface StringMap {
   'generalSettingsScreen.disableLoadingAnimationsDesc': 'string';
   'generalSettingsScreen.disableHapticFeedback': 'string';
   'generalSettingsScreen.disableHapticFeedbackDescription': 'string';
+  'generalSettingsScreen.chapterDownloadCooldown': 'string';
+  'generalSettingsScreen.chapterDownloadCooldownDesc': 'string';
+  'generalSettingsScreen.chapterDownloadCooldownPlaceholder': 'string';
+  'generalSettingsScreen.chapterDownloadCooldownWarning': 'string';
   'generalSettingsScreen.displayMode': 'string';
   'generalSettingsScreen.downloadNewChapters': 'string';
   'generalSettingsScreen.epub': 'string';
@@ -408,6 +412,8 @@ export interface StringMap {
   'readerScreen.nextChapter': 'string';
   'readerScreen.noNextChapter': 'string';
   'readerScreen.noPreviousChapter': 'string';
+  'readerScreen.searchMinLength': 'string';
+  'readerScreen.searchPlaceholder': 'string';
   'readerSettings.autoScrollInterval': 'string';
   'readerSettings.autoScrollOffset': 'string';
   'readerSettings.backgroundColor': 'string';
