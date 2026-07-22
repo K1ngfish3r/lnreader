@@ -8,7 +8,11 @@ import { getString } from '@strings/translations';
 import { NOVEL_STORAGE } from '@utils/Storages';
 import { dbManager } from '@database/db';
 import { novelSchema, chapterSchema } from '@database/schema';
-import { BackgroundTaskMetadata } from '@services/ServiceManager';
+import type {
+  BackgroundTaskMetadata,
+  EpubImportFile,
+  TaskProgressUpdater,
+} from '@services/backgroundTasks/contracts';
 import NativeFile from '@specs/NativeFile';
 import NativeZipArchive from '@specs/NativeZipArchive';
 import NativeEpub from '@specs/NativeEpub';
@@ -39,13 +43,13 @@ const insertLocalNovel = async (
   if (insertId !== undefined && insertId >= 0) {
     await updateNovelCategoryById(insertId, [2]);
     const novelDir = NOVEL_STORAGE + '/local/' + insertId;
-    NativeFile.mkdir(novelDir);
+    await NativeFile.mkdir(novelDir);
     const newCoverPath = `file://${novelDir}/${cover?.split(/[/\\]/).pop()}`;
 
     if (cover) {
       const decodedPath = decodePath(cover);
-      if (NativeFile.exists(decodedPath)) {
-        NativeFile.moveFile(decodedPath, newCoverPath);
+      if (await NativeFile.exists(decodedPath)) {
+        await NativeFile.moveFile(decodedPath, newCoverPath);
       }
     }
     await updateNovelInfo({
@@ -89,7 +93,7 @@ const insertLocalChapter = async (
 
   if (insertId !== undefined && insertId >= 0) {
     let chapterText: string = '';
-    chapterText = NativeFile.readFile(decodePath(path));
+    chapterText = await NativeFile.readFile(decodePath(path));
     if (!chapterText) {
       return [];
     }
@@ -100,24 +104,19 @@ const insertLocalChapter = async (
         return `="file://${novelDir}/${$2.split(/[/\\]/).pop()}"`;
       },
     );
-    NativeFile.mkdir(novelDir + '/' + insertId);
-    NativeFile.writeFile(`${novelDir}/${insertId}/index.html`, chapterText);
+    await NativeFile.mkdir(novelDir + '/' + insertId);
+    await NativeFile.writeFile(
+      `${novelDir}/${insertId}/index.html`,
+      chapterText,
+    );
     return;
   }
   throw new Error(getString('advancedSettingsScreen.chapterInsertFailed'));
 };
 
 export const importEpub = async (
-  {
-    uri,
-    filename,
-  }: {
-    uri: string;
-    filename: string;
-  },
-  setMeta: (
-    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
-  ) => void,
+  { uri, filename }: EpubImportFile,
+  setMeta: TaskProgressUpdater,
 ) => {
   setMeta(meta => ({
     ...meta,
@@ -128,7 +127,7 @@ export const importEpub = async (
   const epubFilePath =
     NativeFile.getConstants().ExternalCachesDirectoryPath + '/novel.epub';
   try {
-    NativeFile.copyFile(uri, epubFilePath);
+    await NativeFile.copyFile(uri, epubFilePath);
   } catch {
     throw new Error(
       `Failed to read EPUB file "${filename}". The file may have been moved or deleted. Please try importing again.`,
@@ -136,10 +135,10 @@ export const importEpub = async (
   }
   const epubDirPath =
     NativeFile.getConstants().ExternalCachesDirectoryPath + '/epub';
-  if (NativeFile.exists(epubDirPath)) {
-    NativeFile.unlink(epubDirPath);
+  if (await NativeFile.exists(epubDirPath)) {
+    await NativeFile.unlink(epubDirPath);
   }
-  NativeFile.mkdir(epubDirPath);
+  await NativeFile.mkdir(epubDirPath);
   await NativeZipArchive.unzip(epubFilePath, epubDirPath);
   const novel = NativeEpub.parseNovelAndChapters(epubDirPath);
   if (!novel.name) {
@@ -184,8 +183,8 @@ export const importEpub = async (
   for (const filePath of novel.imagePaths) {
     const decodedPath = decodePath(filePath);
 
-    if (NativeFile.exists(decodedPath)) {
-      NativeFile.moveFile(
+    if (await NativeFile.exists(decodedPath)) {
+      await NativeFile.moveFile(
         decodedPath,
         novelDir + '/' + filePath.split(/[/\\]/).pop(),
       );
@@ -194,8 +193,8 @@ export const importEpub = async (
 
   for (const filePath of novel.cssPaths) {
     const decodedPath = decodePath(filePath);
-    if (NativeFile.exists(decodedPath)) {
-      NativeFile.moveFile(
+    if (await NativeFile.exists(decodedPath)) {
+      await NativeFile.moveFile(
         decodedPath,
         novelDir + '/' + filePath.split(/[/\\]/).pop(),
       );
@@ -207,4 +206,66 @@ export const importEpub = async (
     progress: 1,
     isRunning: false,
   }));
+};
+
+export const importEpubBatch = async (
+  { files }: { files: EpubImportFile[] },
+  setMeta: TaskProgressUpdater,
+) => {
+  if (!files.length) return;
+
+  const failures: string[] = [];
+
+  for (let index = 0; index < files.length; index++) {
+    const file = files[index];
+    let fileMeta: BackgroundTaskMetadata = {
+      name: file.filename,
+      isRunning: true,
+      progress: 0,
+      progressText: undefined,
+    };
+    let progressError: unknown;
+    const updateFileProgress: TaskProgressUpdater = transformer => {
+      fileMeta = transformer(fileMeta);
+      try {
+        setMeta(meta => ({
+          ...meta,
+          isRunning: true,
+          progress: (index + (fileMeta.progress ?? 0)) / files.length,
+          progressText: `${index + 1}/${files.length} · ${file.filename}${
+            fileMeta.progressText ? ` · ${fileMeta.progressText}` : ''
+          }`,
+        }));
+      } catch (error) {
+        progressError = error;
+        throw error;
+      }
+    };
+
+    try {
+      await importEpub(file, updateFileProgress);
+    } catch (error) {
+      if (error === progressError) throw error;
+
+      failures.push(
+        `${file.filename}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+  }
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 1,
+    isRunning: false,
+  }));
+
+  if (failures.length) {
+    throw new Error(
+      `${failures.length} of ${
+        files.length
+      } EPUB imports failed: ${failures.join('; ')}`,
+    );
+  }
 };
