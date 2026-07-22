@@ -145,7 +145,6 @@
           "native-zip-archive",
           "nitro-import-epub",
           "native-background-tasks",
-          "react-native-background-actions",
           "@react-native-vector-icons/material-design-icons",
           "react-native-saf-x",
           "lottie-ios"
