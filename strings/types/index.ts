@@ -24,6 +24,7 @@ export interface StringMap {
   'advancedSettingsScreen.deleteReadChapters': 'string';
   'advancedSettingsScreen.deleteReadChaptersDialogTitle': 'string';
   'advancedSettingsScreen.importEpub': 'string';
+  'advancedSettingsScreen.importFailed': 'string';
   'advancedSettingsScreen.importNovel': 'string';
   'advancedSettingsScreen.importStaticFiles': 'string';
   'advancedSettingsScreen.novelInsertFailed': 'string';
@@ -317,8 +318,8 @@ export interface StringMap {
   'novelScreen.bottomSheet.displays.sourceTitle': 'string';
   'novelScreen.bottomSheet.filters.bookmarked': 'string';
   'novelScreen.bottomSheet.filters.downloaded': 'string';
-  'novelScreen.bottomSheet.filters.scanlators': 'string';
   'novelScreen.bottomSheet.filters.unread': 'string';
+  'novelScreen.bottomSheet.filters.scanlators': 'string';
   'novelScreen.bottomSheet.order.byChapterName': 'string';
   'novelScreen.bottomSheet.order.bySource': 'string';
   'novelScreen.chapterChapnum': 'string';

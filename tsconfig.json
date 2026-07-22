@@ -1,5 +1,5 @@
 {
-  "extends": "@react-native/typescript-config",
+  "extends": "expo/tsconfig.base",
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": [
     "**/node_modules",
@@ -14,7 +14,6 @@
     "module": "ES2022",
     "lib": ["ES2022", "DOM"],
     "target": "ES2022",
-    "baseUrl": ".",
     "paths": {
       "@components": ["./src/components/index"],
       "@components/*": ["./src/components/*"],
@@ -33,7 +32,8 @@
       "@type/*": ["./src/type/*"],
       "@specs/*": ["./specs/*"],
       "@test-utils": ["./__tests-modules__/test-utils"],
-      "@env": ["./src/generated/build-info"]
+      "@env": ["./src/generated/build-info"],
+      "@modules/*": ["./modules/*"]
     },
     "types": ["react-native", "jest"]
   }

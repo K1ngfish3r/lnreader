@@ -7,7 +7,7 @@ import type { BackgroundTaskEnqueuer } from '@services/backgroundTasks/contracts
 import { dbManager } from '@database/db';
 import { novelSchema, chapterSchema } from '@database/schema';
 import { eq, and, inArray } from 'drizzle-orm';
-import NativeFile from '@specs/NativeFile';
+import NativeFile from '@modules/native-file'
 import { insertChapters } from '@database/queries/ChapterQueries';
 
 /**

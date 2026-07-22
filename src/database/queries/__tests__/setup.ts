@@ -6,9 +6,9 @@
  */
 
 // @ts-ignore
-global.__DEV__ ??= false;
-
 import type { TestDb } from './testDb';
+
+global.__DEV__ ??= false;
 
 const getTestDbModule = () => require('./testDb') as typeof import('./testDb');
 
@@ -72,7 +72,7 @@ jest.mock('@utils/Storages', () => ({
 }));
 
 // Mock NativeFile
-jest.mock('@specs/NativeFile', () => ({
+jest.mock('@modules/native-file', () => ({
   __esModule: true,
   default: {
     exists: jest.fn().mockReturnValue(true),

@@ -14,7 +14,7 @@ import type {
   BackgroundTaskExecutionContext,
   TaskProgressUpdater,
 } from '@services/backgroundTasks/contracts';
-import NativeFile from '@specs/NativeFile';
+import NativeFile from '@modules/native-file';
 import { eq } from 'drizzle-orm';
 import { parseDownloadCheckpoint } from './downloadCheckpoint';
 

@@ -3,10 +3,7 @@ import React, { useEffect } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import {
-  changeNavigationBarColor,
-  setStatusBarColor,
-} from '@theme/utils/setBarColor';
+import { setStatusBarColor } from '@theme/utils/setBarColor';
 import { useAppSettings, usePlugins, useTheme } from '@hooks/persisted';
 import { useGithubUpdateChecker } from '@hooks/common/useGithubUpdateChecker';
 
@@ -32,7 +29,6 @@ import NewUpdateDialog from '../components/NewUpdateDialog';
 import BrowseSettings from '../screens/browse/settings/BrowseSettings';
 import WebviewScreen from '@screens/WebviewScreen/WebviewScreen';
 import { RootStackParamList } from './types';
-import Color from 'color';
 import { useMMKVBoolean } from 'react-native-mmkv';
 import OnboardingScreen from '@screens/onboarding/OnboardingScreen';
 import { backgroundTasks } from '@services/backgroundTasks';
@@ -50,7 +46,6 @@ const MainNavigator = () => {
   useEffect(() => {
     const timer = setTimeout(async () => {
       setStatusBarColor(theme);
-      changeNavigationBarColor(Color(theme.surface2).hex(), theme.isDark);
     }, 500);
 
     return () => {

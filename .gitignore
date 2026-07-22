@@ -9,6 +9,7 @@ npm-debug.*
 *.orig.*
 web-build/
 .*env
+.env.local
 reader_playground/index.html
 # macOS
 .DS_Store
@@ -102,3 +103,11 @@ src/generated/**/*
 
 # TypeScript
 *.tsbuildinfo
+
+*/**/org.eclipse.buildship.core.prefs
+*/**/org.eclipse.jdt.core.prefs
+*/**/.classpath
+*/**/.project
+android/
+!modules/**/android/
+ios/

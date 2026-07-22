@@ -16,15 +16,15 @@ import {
 import { BackupCategory, BackupNovel } from '@database/types';
 import { BackupEntryName } from './types';
 import { ROOT_STORAGE } from '@utils/Storages';
-import { BACKGROUND_TASKS_STORE_KEY } from '@services/backgroundTasks';
-import NativeFile from '@specs/NativeFile';
+import { BACKGROUND_TASKS_STORE_KEY } from '@services/backgroundTasks/BackgroundTaskQueue';
+import NativeFile from '@modules/native-file'
 import { showToast } from '@utils/showToast';
 import { getString } from '@strings/translations';
 
 const APP_STORAGE_URI = 'file://' + ROOT_STORAGE;
 
 export const CACHE_DIR_PATH =
-  NativeFile.getConstants().ExternalCachesDirectoryPath + '/BackupData';
+  NativeFile.ExternalCachesDirectoryPath + '/BackupData';
 
 const backupMMKVData = () => {
   const excludeKeys = [

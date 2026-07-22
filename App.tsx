@@ -1,12 +1,9 @@
 import 'react-native-url-polyfill/auto';
 import { enableFreeze } from 'react-native-screens';
-
-enableFreeze(true);
-
-import React, { Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LottieSplashScreen from 'react-native-lottie-splash-screen';
+import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider as PaperProvider } from 'react-native-paper';
 
@@ -20,6 +17,8 @@ import { useInitDatabase } from '@database/db';
 import { useInitializeAppServices } from '@hooks/common/useInitializeAppServices';
 import { ThemeProvider } from '@hooks/persisted/useTheme';
 
+enableFreeze(true);
+
 const App = () => {
   const { success: databaseReady, error: databaseError } = useInitDatabase();
   const { ready: servicesReady, error: servicesError } =
@@ -27,7 +26,7 @@ const App = () => {
 
   useEffect(() => {
     if ((databaseReady && servicesReady) || databaseError || servicesError) {
-      LottieSplashScreen.hide();
+      SplashScreen.hideAsync();
     }
   }, [databaseReady, databaseError, servicesReady, servicesError]);
 
@@ -35,7 +34,9 @@ const App = () => {
 
   if (initializationError) {
     return (
-      <ErrorFallback error={initializationError} resetError={() => null} />
+      <ThemeProvider>
+        <ErrorFallback error={initializationError} resetError={() => null} />
+      </ThemeProvider>
     );
   }
 
@@ -46,18 +47,18 @@ const App = () => {
   return (
     <Suspense fallback={null}>
       <GestureHandlerRootView style={styles.flex}>
-        <AppErrorBoundary>
-          <SafeAreaProvider>
-            <ThemeProvider>
+        <ThemeProvider>
+          <AppErrorBoundary>
+            <SafeAreaProvider>
               <PaperProvider>
                 <BottomSheetModalProvider>
                   <StatusBar translucent={true} backgroundColor="transparent" />
                   <Main />
                 </BottomSheetModalProvider>
               </PaperProvider>
-            </ThemeProvider>
-          </SafeAreaProvider>
-        </AppErrorBoundary>
+            </SafeAreaProvider>
+          </AppErrorBoundary>
+        </ThemeProvider>
       </GestureHandlerRootView>
     </Suspense>
   );
