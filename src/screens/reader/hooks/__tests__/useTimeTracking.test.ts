@@ -1,20 +1,9 @@
 import { act, renderHook } from '@testing-library/react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import useTimeTracking from '../useTimeTracking';
 
 // Capture the listener so tests can fire fake AppState events
-let appStateHandler: (state: string) => void;
-
-jest.mock('react-native', () => {
-  return {
-    AppState: {
-      currentState: 'active',
-      addEventListener: jest.fn((_event, handler) => {
-        appStateHandler = handler;
-        return { remove: jest.fn() };
-      }),
-    },
-  };
-});
+let appStateHandler: (state: AppStateStatus) => void;
 
 describe('useTimeTracking', () => {
   const increaseTimeSpent = jest.fn();
@@ -22,6 +11,13 @@ describe('useTimeTracking', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
+    AppState.currentState = 'active';
+    jest
+      .spyOn(AppState, 'addEventListener')
+      .mockImplementation((_event, handler) => {
+        appStateHandler = handler;
+        return { remove: jest.fn() };
+      });
   });
 
   afterEach(() => {
@@ -63,10 +59,10 @@ describe('useTimeTracking', () => {
       appStateHandler('background'); // flush 3s
     });
 
-	const firstElapsed = increaseTimeSpent.mock.calls[0][1];
-	expect(firstElapsed).toBeLessThan(6000); // 5s flush
-	const secondElapsed = increaseTimeSpent.mock.calls[1][1];
-	expect(secondElapsed).toBeLessThan(4000); // 3s flush
+    const firstElapsed = increaseTimeSpent.mock.calls[0][1];
+    expect(firstElapsed).toBeLessThan(6000); // 5s flush
+    const secondElapsed = increaseTimeSpent.mock.calls[1][1];
+    expect(secondElapsed).toBeLessThan(4000); // 3s flush
   });
 
   it('flushes remaining time on unmount', () => {
@@ -85,7 +81,8 @@ describe('useTimeTracking', () => {
 
   it('flushes for the previous chapter id when chapterId changes', () => {
     const { rerender } = renderHook(
-      ({ chapterId }: { chapterId: number }) => useTimeTracking(chapterId, false, increaseTimeSpent),
+      ({ chapterId }: { chapterId: number }) =>
+        useTimeTracking(chapterId, false, increaseTimeSpent),
       { initialProps: { chapterId: 1 } },
     );
 
