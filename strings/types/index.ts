@@ -449,6 +449,11 @@ export interface StringMap {
   'statsScreen.titlesInLibrary': 'string';
   'statsScreen.totalChapters': 'string';
   'statsScreen.unreadChapters': 'string';
+  'statsScreen.topNovelsByTimeSpent': 'string';
+  'statsScreen.topCategoriesByTimeSpent': 'string';
+  'statsScreen.totalTimeSpent': 'string';
+  'statsScreen.showNovels': 'string';
+  'statsScreen.showCategories': 'string';
   'tracking': 'string';
   'trackingScreen.logOutMessage': 'string';
   'trackingScreen.revalidate': 'string';
@@ -480,4 +485,12 @@ export interface StringMap {
   'notifications.LOCAL_RESTORE': 'string';
   'notifications.MIGRATE_NOVEL': 'string';
   'notifications.DOWNLOAD_CHAPTER': 'string';
+  'time.seconds.one': 'string';
+  'time.seconds.other': 'string';
+  'time.minutes.one': 'string';
+  'time.minutes.other': 'string';
+  'time.hours.one': 'string';
+  'time.hours.other': 'string';
+  'time.days.one': 'string';
+  'time.days.other': 'string';
 }
