@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -23,6 +23,12 @@ import { Appbar, List, SafeAreaView, SegmentedControl } from '@components';
 import { AppearanceSettingsScreenProps } from '@navigators/types';
 import { getString } from '@strings/translations';
 import { darkThemes, lightThemes } from '@theme/md3';
+import {
+  DYNAMIC_THEME_ID,
+  getSystemDynamicTheme,
+  isDynamicThemeAvailable,
+  toDynamicThemeColors,
+} from '@theme/dynamic';
 import { ThemeColors } from '@theme/types';
 import switchTheme from 'react-native-theme-switch-animation';
 import Color from 'color';
@@ -56,6 +62,21 @@ const AppearanceSettings = ({ navigation }: AppearanceSettingsScreenProps) => {
       : colorScheme === 'unspecified'
       ? 'light'
       : colorScheme;
+  const availableThemes = useMemo(() => {
+    const themes = actualThemeMode === 'light' ? lightThemes : darkThemes;
+    if (!isDynamicThemeAvailable) {
+      return themes;
+    }
+
+    const dynamicTheme =
+      theme.id === DYNAMIC_THEME_ID
+        ? theme
+        : toDynamicThemeColors(
+            getSystemDynamicTheme(),
+            actualThemeMode === 'dark',
+          );
+    return [dynamicTheme, ...themes];
+  }, [actualThemeMode, theme]);
 
   /**
    * Accent Color Modal
@@ -178,6 +199,7 @@ const AppearanceSettings = ({ navigation }: AppearanceSettingsScreenProps) => {
     event: GestureResponderEvent,
   ) => {
     setThemeId(selectedTheme.id);
+    setCustomAccentColor(undefined);
     event.currentTarget.measure((_x1, _y1, width, height, px, py) => {
       switchTheme({
         switchThemeFunction: () => {},
@@ -219,10 +241,6 @@ const AppearanceSettings = ({ navigation }: AppearanceSettingsScreenProps) => {
             />
           </View>
 
-          {/* Light Themes */}
-          {/*<Text style={[{ color: theme.onSurface }, styles.themeSectionText]}>
-            {getString('appearanceScreen.lightTheme')}
-          </Text>*/}
           <View style={styles.scrollViewContainer}>
             <ScrollView
               contentContainerStyle={[
@@ -232,17 +250,15 @@ const AppearanceSettings = ({ navigation }: AppearanceSettingsScreenProps) => {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             >
-              {(actualThemeMode === 'light' ? lightThemes : darkThemes).map(
-                item => (
-                  <ThemePicker
-                    horizontal
-                    key={item.id}
-                    currentTheme={theme}
-                    theme={item}
-                    onPress={e => handleThemeSelect(item, e)}
-                  />
-                ),
-              )}
+              {availableThemes.map(item => (
+                <ThemePicker
+                  horizontal
+                  key={item.id}
+                  currentTheme={theme}
+                  theme={item}
+                  onPress={e => handleThemeSelect(item, e)}
+                />
+              ))}
             </ScrollView>
           </View>
           {theme.isDark ? (
@@ -253,12 +269,14 @@ const AppearanceSettings = ({ navigation }: AppearanceSettingsScreenProps) => {
               theme={theme}
             />
           ) : null}
-          <List.ColorItem
-            title={getString('appearanceScreen.accentColor')}
-            color={Color(theme.primary)}
-            onPress={showAccentColorModal}
-            theme={theme}
-          />
+          {theme.id === DYNAMIC_THEME_ID ? null : (
+            <List.ColorItem
+              title={getString('appearanceScreen.accentColor')}
+              color={Color(theme.primary)}
+              onPress={showAccentColorModal}
+              theme={theme}
+            />
+          )}
           <List.Item
             title={getString('appearanceScreen.appLanguage')}
             description={getCurrentLanguageName()}

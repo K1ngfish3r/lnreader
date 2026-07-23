@@ -46,6 +46,7 @@
     "appLanguageDefault": "Default",
     "appTheme": "App theme",
     "darkTheme": "Dark Theme",
+    "dynamicColors": "Dynamic",
     "hideBackdrop": "Hide backdrop",
     "lightTheme": "Light Theme",
     "navbar": "Navbar",
@@ -549,8 +550,8 @@
     "topNovelsByTimeSpent": "Top novels by time spent",
     "topCategoriesByTimeSpent": "Top categories by time spent",
     "totalTimeSpent": "Total time spent",
-  "showNovels": "Group by novel",
-  "showCategories": "Group by category"
+    "showNovels": "Group by novel",
+    "showCategories": "Group by category"
   },
   "tracking": "Tracking",
   "trackingScreen": {

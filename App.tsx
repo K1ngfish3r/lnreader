@@ -1,11 +1,15 @@
 import 'react-native-url-polyfill/auto';
 import { enableFreeze } from 'react-native-screens';
-import { Suspense, useEffect } from 'react';
+import { PropsWithChildren, Suspense, useEffect, useMemo } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider as PaperProvider } from 'react-native-paper';
+import {
+  MD3DarkTheme,
+  MD3LightTheme,
+  Provider as PaperProvider,
+} from 'react-native-paper';
 
 import AppErrorBoundary, {
   ErrorFallback,
@@ -15,9 +19,26 @@ import Main from './src/navigators/Main';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useInitDatabase } from '@database/db';
 import { useInitializeAppServices } from '@hooks/common/useInitializeAppServices';
-import { ThemeProvider } from '@hooks/persisted/useTheme';
+import { ThemeProvider, useTheme } from '@hooks/persisted/useTheme';
 
 enableFreeze(true);
+
+const ThemedPaperProvider = ({ children }: PropsWithChildren) => {
+  const theme = useTheme();
+  const paperTheme = useMemo(() => {
+    const baseTheme = theme.isDark ? MD3DarkTheme : MD3LightTheme;
+
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        ...theme,
+      },
+    };
+  }, [theme]);
+
+  return <PaperProvider theme={paperTheme}>{children}</PaperProvider>;
+};
 
 const App = () => {
   const { success: databaseReady, error: databaseError } = useInitDatabase();
@@ -50,12 +71,12 @@ const App = () => {
         <ThemeProvider>
           <AppErrorBoundary>
             <SafeAreaProvider>
-              <PaperProvider>
+              <ThemedPaperProvider>
                 <BottomSheetModalProvider>
                   <StatusBar translucent={true} backgroundColor="transparent" />
                   <Main />
                 </BottomSheetModalProvider>
-              </PaperProvider>
+              </ThemedPaperProvider>
             </SafeAreaProvider>
           </AppErrorBoundary>
         </ThemeProvider>

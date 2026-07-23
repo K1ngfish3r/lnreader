@@ -43,6 +43,7 @@ export interface StringMap {
   'appearanceScreen.appLanguageDefault': 'string';
   'appearanceScreen.appTheme': 'string';
   'appearanceScreen.darkTheme': 'string';
+  'appearanceScreen.dynamicColors': 'string';
   'appearanceScreen.hideBackdrop': 'string';
   'appearanceScreen.lightTheme': 'string';
   'appearanceScreen.navbar': 'string';

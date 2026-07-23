@@ -29,6 +29,9 @@ importers:
       '@op-engineering/op-sqlite':
         specifier: ^15.2.14
         version: 15.2.14(react-native@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0))(react@19.2.3)
+      '@pchmn/expo-material3-theme':
+        specifier: ^1.4.0
+        version: 1.4.0(expo@57.0.7)(react-native@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0))(react@19.2.3)
       '@preeternal/react-native-cookie-manager':
         specifier: ^6.3.3
         version: 6.3.3(react-native@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0))(react@19.2.3)
@@ -1543,6 +1546,9 @@ packages:
       react: '*'
       react-native: '*'
 
+  '@material/material-color-utilities@0.3.0':
+    resolution: {integrity: sha512-ztmtTd6xwnuh2/xu+Vb01btgV8SQWYCaK56CkRK8gEkWe5TuDyBcYJ0wgkMRn+2VcE9KUmhvkz+N9GHrqw/C0g==}
+
   '@napi-rs/wasm-runtime@1.1.6':
     resolution: {integrity: sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg==}
     peerDependencies:
@@ -1566,6 +1572,13 @@ packages:
     peerDependenciesMeta:
       '@sqlite.org/sqlite-wasm':
         optional: true
+
+  '@pchmn/expo-material3-theme@1.4.0':
+    resolution: {integrity: sha512-XNt0gpZX5argOQ7JiFnNdiXHpHjmpwJoMQrlnd1kpb8ly/IWZN2hh011incmfZXV2Xs+p6Uo1BGDKv8hW4MQTQ==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+      react-native: '*'
 
   '@preeternal/react-native-cookie-manager@6.3.3':
     resolution: {integrity: sha512-ddA3H7nbV0n/EdJ3ZXDd9GpT9jzhBiMrVeXftJf1mJ1gqyQnZ6d8EEd+k/lnjzfhqK6Z2kvXggCSpwAH991Gvw==}
@@ -7600,6 +7613,8 @@ snapshots:
       react-native: 0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0)
       use-sync-external-store: 1.6.0(react@19.2.3)
 
+  '@material/material-color-utilities@0.3.0': {}
+
   '@napi-rs/wasm-runtime@1.1.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
       '@emnapi/core': 1.10.0
@@ -7613,6 +7628,14 @@ snapshots:
 
   '@op-engineering/op-sqlite@15.2.14(react-native@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0))(react@19.2.3)':
     dependencies:
+      react: 19.2.3
+      react-native: 0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0)
+
+  '@pchmn/expo-material3-theme@1.4.0(expo@57.0.7)(react-native@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0))(react@19.2.3)':
+    dependencies:
+      '@material/material-color-utilities': 0.3.0
+      color: 4.2.3
+      expo: 57.0.7(09a92d6f4cb27d968ea2a7d0b76b3213)
       react: 19.2.3
       react-native: 0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(react@19.2.3)(supports-color@9.4.0))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@9.4.0))(supports-color@9.4.0))(@types/react@19.2.17)(react@19.2.3)(supports-color@9.4.0)
 
