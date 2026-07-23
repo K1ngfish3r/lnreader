@@ -1,4 +1,4 @@
-name: Build preview APK
+name: Build Preview
 
 on:
   push:
@@ -19,37 +19,37 @@ env:
 
 jobs:
   build-android:
-    name: Build Android pre-release APK
+    name: APK
     runs-on: ubuntu-24.04
     timeout-minutes: 60
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Set up pnpm
+      - name: Set Up pnpm
         uses: pnpm/action-setup@v6
 
-      - name: Set up Node.js
+      - name: Set Up Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
-      - name: Set up Java
+      - name: Set Up Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Generate release environment
+      - name: Configure Release Environment
         env:
           MYANIMELIST_CLIENT_ID: ${{ vars.MYANIMELIST_CLIENT_ID }}
           ANILIST_CLIENT_ID: ${{ vars.ANILIST_CLIENT_ID }}
@@ -60,7 +60,7 @@ jobs:
             --myanimelist-client-id "$MYANIMELIST_CLIENT_ID" \
             --anilist-client-id "$ANILIST_CLIENT_ID"
 
-      - name: Generate Android project
+      - name: Generate Native Android Project
         run: |
           pnpm exec expo prebuild \
             --platform android \
@@ -68,7 +68,7 @@ jobs:
             --no-install \
             --non-interactive
 
-      - name: Set up Gradle
+      - name: Configure Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: enhanced
@@ -77,19 +77,36 @@ jobs:
           cache-cleanup: on-success
           add-job-summary: always
 
-      - name: Build pre-release APK
+      - name: Generate Preview Metadata
+        run: |
+          short_sha="${GITHUB_SHA::8}"
+          base_version_name="$(node --print "require('./app.json').expo.version")"
+          base_version_code="$(node --print "require('./app.json').expo.android.versionCode")"
+
+          echo "PRERELEASE_VERSION_CODE=$((base_version_code + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+          echo "PRERELEASE_VERSION_NAME=${base_version_name}-pre.r${GITHUB_RUN_NUMBER}.${short_sha}" >> "$GITHUB_ENV"
+          echo "PRERELEASE_BUILD_NAME=LNReader-r${GITHUB_RUN_NUMBER}-${short_sha}" >> "$GITHUB_ENV"
+          echo "PRERELEASE_APK_NAME=LNReader-r${GITHUB_RUN_NUMBER}-${short_sha}.apk" >> "$GITHUB_ENV"
+
+      - name: Build Preview APK
         working-directory: android
         run: |
           ./gradlew :app:assemblePreRelease \
             --build-cache \
             --parallel \
+            -PpreReleaseVersionCode="$PRERELEASE_VERSION_CODE" \
+            -PpreReleaseVersionName="$PRERELEASE_VERSION_NAME" \
             --stacktrace
 
-      - name: Upload APK artifact
+          mv \
+            app/build/outputs/apk/preRelease/app-preRelease.apk \
+            "app/build/outputs/apk/preRelease/$PRERELEASE_APK_NAME"
+
+      - name: Upload Preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: LNReader-preRelease-${{ github.sha }}
-          path: android/app/build/outputs/apk/preRelease/*.apk
+          name: ${{ env.PRERELEASE_BUILD_NAME }}
+          path: android/app/build/outputs/apk/preRelease/${{ env.PRERELEASE_APK_NAME }}
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
