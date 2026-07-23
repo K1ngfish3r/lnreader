@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, Text } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import { openDocumentTree } from 'react-native-saf-x';
 
-import { Button, List, Modal, SwitchItem } from '@components';
+import { Dialog, List, SwitchItem } from '@components';
 
 import { useBoolean } from '@hooks';
 import { getString } from '@strings/translations';
@@ -93,11 +93,11 @@ const ExportEpubModal: React.FC<ExportEpubModalProps> = ({
   };
 
   return (
-    <Modal visible={isVisible} onDismiss={onDismiss}>
-      <View>
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {getString('novelScreen.exportEpubModal.title')}
-        </Text>
+    <Dialog.Root visible={isVisible} onDismiss={onDismiss}>
+      <Dialog.Title>
+        {getString('novelScreen.exportEpubModal.title')}
+      </Dialog.Title>
+      <Dialog.Content>
         <TextInput
           onChangeText={setUri}
           value={uri}
@@ -114,15 +114,15 @@ const ExportEpubModal: React.FC<ExportEpubModalProps> = ({
             />
           }
         />
-      </View>
-      <View style={styles.settings}>
+      </Dialog.Content>
+      <Dialog.List>
         <SwitchItem
           label={getString('novelScreen.exportEpubModal.exportAll')}
           value={exportAll.value}
           onPress={exportAll.toggle}
           theme={theme}
         />
-        {!exportAll.value && (
+        {!exportAll.value ? (
           <View style={styles.rangeInputs}>
             <TextInput
               label={getString('novelScreen.exportEpubModal.startChapter')}
@@ -147,7 +147,7 @@ const ExportEpubModal: React.FC<ExportEpubModalProps> = ({
               style={styles.rangeInput}
             />
           </View>
-        )}
+        ) : null}
         <SwitchItem
           label={getString('novelScreen.exportEpubModal.applyReaderTheme')}
           value={useAppTheme.value}
@@ -167,17 +167,25 @@ const ExportEpubModal: React.FC<ExportEpubModalProps> = ({
           onPress={useCustomJS.toggle}
           theme={theme}
         />
-      </View>
-      <List.InfoItem
-        style={styles.infoItem}
-        title={getString('novelScreen.exportEpubModal.downloadedChaptersOnly')}
-        theme={theme}
-      />
-      <View style={styles.modalFooterCtn}>
-        <Button title={getString('common.submit')} onPress={onSubmit} />
-        <Button title={getString('common.cancel')} onPress={hideModal} />
-      </View>
-    </Modal>
+      </Dialog.List>
+      <Dialog.Content>
+        <List.InfoItem
+          style={styles.infoItem}
+          title={getString(
+            'novelScreen.exportEpubModal.downloadedChaptersOnly',
+          )}
+          theme={theme}
+        />
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action onPress={hideModal}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action onPress={onSubmit}>
+          {getString('common.submit')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -188,23 +196,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
 
-  modalFooterCtn: {
-    flexDirection: 'row-reverse',
-
-    paddingBottom: 20,
-    paddingTop: 8,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-  settings: {
-    marginTop: 12,
-  },
   rangeInputs: {
     flexDirection: 'row',
     gap: 12,
     marginBottom: 12,
+    paddingHorizontal: 24,
   },
   rangeInput: {
     flex: 1,

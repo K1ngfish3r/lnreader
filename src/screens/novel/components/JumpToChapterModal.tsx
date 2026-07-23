@@ -6,9 +6,9 @@ import {
   TextInput as RNTextInput,
 } from 'react-native';
 import { getString } from '@strings/translations';
-import { Button, Modal, SwitchItem } from '@components';
+import { Dialog, SwitchItem } from '@components';
 
-import { Portal, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { useTheme } from '@hooks/persisted';
 import { ChapterInfo, NovelInfo } from '@database/types';
 import { NovelScreenProps } from '@navigators/types';
@@ -187,55 +187,55 @@ const JumpToChapterModal = ({
   const borderWidth = inputFocused || error ? 2 : 1;
   const margin = inputFocused || error ? 0 : 1;
   return (
-    <Portal>
-      <Modal visible={modalVisible} onDismiss={onDismiss}>
-        <View>
-          <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-            {getString('novelScreen.jumpToChapterModal.jumpToChapter')}
-          </Text>
-          <RNTextInput
-            ref={inputRef}
-            placeholder={placeholder}
-            placeholderTextColor={'grey'}
-            onChangeText={onChangeText}
-            onSubmitEditing={onSubmit}
-            keyboardType={mode ? 'default' : 'numeric'}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
-            style={[
-              {
-                color: theme.onBackground,
-                backgroundColor: theme.background,
-                borderColor: error
-                  ? theme.error
-                  : inputFocused
-                  ? theme.primary
-                  : theme.outline,
-                borderWidth: borderWidth,
-                margin: margin,
-              },
-              styles.textInput,
-            ]}
-          />
-          {!!error && (
-            <Text style={[styles.errorText, { color: errorColor }]}>
-              {error}
-            </Text>
-          )}
-          <SwitchItem
-            label={getString('novelScreen.jumpToChapterModal.openChapter')}
-            value={openChapter}
-            theme={theme}
-            onPress={() => setOpenChapter(!openChapter)}
-          />
-          <SwitchItem
-            label={getString('novelScreen.jumpToChapterModal.chapterName')}
-            value={mode}
-            theme={theme}
-            onPress={() => setMode(!mode)}
-          />
-        </View>
-        {result.length ? (
+    <Dialog.Root visible={modalVisible} onDismiss={onDismiss}>
+      <Dialog.Title>
+        {getString('novelScreen.jumpToChapterModal.jumpToChapter')}
+      </Dialog.Title>
+      <Dialog.Content>
+        <RNTextInput
+          ref={inputRef}
+          placeholder={placeholder}
+          placeholderTextColor={'grey'}
+          onChangeText={onChangeText}
+          onSubmitEditing={onSubmit}
+          keyboardType={mode ? 'default' : 'numeric'}
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
+          style={[
+            {
+              color: theme.onBackground,
+              backgroundColor: theme.background,
+              borderColor: error
+                ? theme.error
+                : inputFocused
+                ? theme.primary
+                : theme.outline,
+              borderWidth: borderWidth,
+              margin: margin,
+            },
+            styles.textInput,
+          ]}
+        />
+        {error ? (
+          <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
+        ) : null}
+      </Dialog.Content>
+      <Dialog.List>
+        <SwitchItem
+          label={getString('novelScreen.jumpToChapterModal.openChapter')}
+          value={openChapter}
+          theme={theme}
+          onPress={() => setOpenChapter(!openChapter)}
+        />
+        <SwitchItem
+          label={getString('novelScreen.jumpToChapterModal.chapterName')}
+          value={mode}
+          theme={theme}
+          onPress={() => setMode(!mode)}
+        />
+      </Dialog.List>
+      {result.length ? (
+        <Dialog.Content>
           <View style={[styles.legendlist, { borderColor: theme.outline }]}>
             <LegendList
               recycleItems
@@ -247,13 +247,17 @@ const JumpToChapterModal = ({
               contentContainerStyle={styles.listContentCtn}
             />
           </View>
-        ) : null}
-        <View style={styles.modalFooterCtn}>
-          <Button title={getString('common.submit')} onPress={onSubmit} />
-          <Button title={getString('common.cancel')} onPress={hideModal} />
-        </View>
-      </Modal>
-    </Portal>
+        </Dialog.Content>
+      ) : null}
+      <Dialog.Actions>
+        <Dialog.Action onPress={hideModal}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action onPress={onSubmit}>
+          {getString('common.submit')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -278,14 +282,6 @@ const styles = StyleSheet.create({
   },
   listElementContainer: {
     paddingVertical: 12,
-  },
-  modalFooterCtn: {
-    flexDirection: 'row-reverse',
-    paddingTop: 8,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
   },
   textInput: {
     borderRadius: 4,

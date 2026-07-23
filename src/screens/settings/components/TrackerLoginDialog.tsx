@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
-import { Text, Button } from 'react-native-paper';
-import { Modal } from '@components';
+import { StyleSheet, Text, TextInput } from 'react-native';
+import { Dialog } from '@components';
 import { useTheme } from '@hooks/persisted';
 
 interface TrackerLoginDialogProps {
@@ -55,12 +54,9 @@ const TrackerLoginDialog: React.FC<TrackerLoginDialogProps> = ({
   };
 
   return (
-    <Modal visible={visible} onDismiss={handleCancel}>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: theme.onSurface }]}>
-          Login to {trackerName}
-        </Text>
-
+    <Dialog.Root visible={visible} onDismiss={handleCancel}>
+      <Dialog.Title>Login to {trackerName}</Dialog.Title>
+      <Dialog.Content>
         <TextInput
           style={[
             styles.input,
@@ -103,42 +99,27 @@ const TrackerLoginDialog: React.FC<TrackerLoginDialogProps> = ({
             {error}
           </Text>
         ) : null}
-
-        <View style={styles.buttonRow}>
-          <Button
-            style={styles.button}
-            labelStyle={[{ color: theme.primary }, styles.buttonLabel]}
-            onPress={handleCancel}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            style={styles.button}
-            labelStyle={[{ color: theme.primary }, styles.buttonLabel]}
-            onPress={handleSubmit}
-            disabled={isLoading}
-            loading={isLoading}
-          >
-            {isLoading ? 'Logging in...' : 'Login'}
-          </Button>
-        </View>
-      </View>
-    </Modal>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action
+          title="Cancel"
+          onPress={handleCancel}
+          disabled={isLoading}
+        />
+        <Dialog.Action
+          title={isLoading ? 'Logging in...' : 'Login'}
+          onPress={handleSubmit}
+          disabled={isLoading}
+          loading={isLoading}
+        />
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default TrackerLoginDialog;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 24,
-    fontWeight: '500',
-  },
   input: {
     height: 48,
     borderWidth: 1,
@@ -151,17 +132,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 16,
     marginTop: -8,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 8,
-  },
-  button: {
-    marginLeft: 8,
-  },
-  buttonLabel: {
-    letterSpacing: 0,
-    textTransform: 'none',
   },
 });

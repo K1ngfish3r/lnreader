@@ -174,13 +174,14 @@ const PluginDetailsScreen = ({
         ) : null}
       </ScrollView>
       <ConfirmationDialog
+        title={getString('browseScreen.uninstall')}
+        confirmLabel={getString('browseScreen.uninstall')}
         visible={showUninstallDialog}
         message={getString('browseScreen.deletePluginMessage', {
           name: plugin.name,
         })}
         onDismiss={() => setShowUninstallDialog(false)}
-        onSubmit={uninstall}
-        theme={theme}
+        onConfirm={uninstall}
       />
     </SafeAreaView>
   );

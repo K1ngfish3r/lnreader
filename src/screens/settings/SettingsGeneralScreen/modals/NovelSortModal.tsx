@@ -1,7 +1,4 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
-
-import { Portal } from 'react-native-paper';
 
 import {
   LibrarySortOrder,
@@ -11,7 +8,7 @@ import { ThemeColors } from '@theme/types';
 import { SortItem } from '@components/Checkbox/Checkbox';
 import { useLibrarySettings } from '@hooks/persisted';
 import { getString } from '@strings/translations';
-import { Modal } from '@components';
+import { Dialog } from '@components';
 
 interface NovelSortModalProps {
   novelSortModalVisible: boolean;
@@ -27,11 +24,11 @@ const NovelSortModal: React.FC<NovelSortModalProps> = ({
   const { sortOrder = LibrarySortOrder.DateAdded_DESC, setLibrarySettings } =
     useLibrarySettings();
   return (
-    <Portal>
-      <Modal visible={novelSortModalVisible} onDismiss={hideNovelSortModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
-          {getString('generalSettingsScreen.sortOrder')}
-        </Text>
+    <Dialog.Root visible={novelSortModalVisible} onDismiss={hideNovelSortModal}>
+      <Dialog.Title>
+        {getString('generalSettingsScreen.sortOrder')}
+      </Dialog.Title>
+      <Dialog.List>
         {librarySortOrderList.map(item => (
           <SortItem
             key={item.ASC}
@@ -51,26 +48,9 @@ const NovelSortModal: React.FC<NovelSortModalProps> = ({
             }
           />
         ))}
-      </Modal>
-    </Portal>
+      </Dialog.List>
+    </Dialog.Root>
   );
 };
 
 export default NovelSortModal;
-
-const styles = StyleSheet.create({
-  modalDescription: {
-    fontSize: 16,
-    marginBottom: 16,
-    paddingHorizontal: 24,
-  },
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 10,
-    paddingHorizontal: 24,
-  },
-  slider: {
-    height: 40,
-    width: '100%',
-  },
-});

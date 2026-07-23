@@ -1,14 +1,14 @@
 import { list } from '@api/remote';
-import { Button, EmptyView, Modal } from '@components';
+import { Button, Dialog, EmptyView } from '@components';
 import { useSelfHost } from '@hooks/persisted/useSelfHost';
 import { backgroundTasks } from '@services/backgroundTasks';
 import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import { fetchTimeout } from '@utils/fetch/fetch';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Portal, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 enum BackupModal {
   SET_HOST,
@@ -100,32 +100,34 @@ function RestoreBackup({
 
   return (
     <>
-      <FlatList
-        contentContainerStyle={styles.backupList}
-        data={backupList}
-        keyExtractor={(item, index) => item + '_' + index}
-        renderItem={({ item }) => (
-          <Button
-            mode="outlined"
-            style={styles.btnOutline}
-            onPress={() => {
-              closeModal();
-              backgroundTasks.enqueue({
-                name: 'SELF_HOST_RESTORE',
-                data: {
-                  host,
-                  backupFolder: item,
-                },
-              });
-            }}
-          >
-            <Text style={{ color: theme.primary }}>
-              {item.replace(/\.backup$/, ' ')}
-            </Text>
-          </Button>
-        )}
-        ListEmptyComponent={emptyComponent}
-      />
+      <Dialog.ScrollArea>
+        <FlatList
+          contentContainerStyle={styles.backupList}
+          data={backupList}
+          keyExtractor={(item, index) => item + '_' + index}
+          renderItem={({ item }) => (
+            <Button
+              mode="outlined"
+              style={styles.btnOutline}
+              onPress={() => {
+                closeModal();
+                backgroundTasks.enqueue({
+                  name: 'SELF_HOST_RESTORE',
+                  data: {
+                    host,
+                    backupFolder: item,
+                  },
+                });
+              }}
+            >
+              <Text style={{ color: theme.primary }}>
+                {item.replace(/\.backup$/, ' ')}
+              </Text>
+            </Button>
+          )}
+          ListEmptyComponent={emptyComponent}
+        />
+      </Dialog.ScrollArea>
       <View style={styles.footerContainer}>
         <Button
           title={getString('common.cancel')}
@@ -269,18 +271,10 @@ export default function SelfHostModal({
   };
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={closeModal}>
-        <>
-          <View style={styles.titleContainer}>
-            <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-              {getString('backupScreen.remote.backup')}
-            </Text>
-          </View>
-          {renderModal()}
-        </>
-      </Modal>
-    </Portal>
+    <Dialog.Root visible={visible} onDismiss={closeModal}>
+      <Dialog.Title>{getString('backupScreen.remote.backup')}</Dialog.Title>
+      <Dialog.Content>{renderModal()}</Dialog.Content>
+    </Dialog.Root>
   );
 }
 
@@ -310,15 +304,5 @@ const styles = StyleSheet.create({
   loadingContent: {
     borderRadius: 16,
     width: '100%',
-  },
-  modalTitle: {
-    fontSize: 24,
-  },
-  titleContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    textAlignVertical: 'center',
   },
 });

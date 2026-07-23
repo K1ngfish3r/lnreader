@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Portal, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
-import { Button, Modal } from '@components/index';
+import { Dialog } from '@components/index';
 
 import { Category } from '../../../database/types';
 import {
@@ -43,15 +42,13 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
   }
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={close}>
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {getString(
-            isEditMode
-              ? 'categories.editCategories'
-              : 'categories.addCategories',
-          )}
-        </Text>
+    <Dialog.Root visible={visible} onDismiss={close}>
+      <Dialog.Title>
+        {getString(
+          isEditMode ? 'categories.editCategories' : 'categories.addCategories',
+        )}
+      </Dialog.Title>
+      <Dialog.Content>
         <TextInput
           autoFocus
           defaultValue={categoryName}
@@ -61,38 +58,30 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
           underlineColor={theme.outline}
           theme={{ colors: { ...theme } }}
         />
-        <View style={styles.btnContainer}>
-          <Button
-            title={getString(isEditMode ? 'common.ok' : 'common.add')}
-            onPress={async () => {
-              if (isCategoryNameDuplicate(categoryName)) {
-                showToast(getString('categories.duplicateError'));
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action onPress={close}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action
+          onPress={async () => {
+            if (isCategoryNameDuplicate(categoryName)) {
+              showToast(getString('categories.duplicateError'));
+            } else {
+              if (isEditMode && category) {
+                updateCategory(category?.id, categoryName);
               } else {
-                if (isEditMode && category) {
-                  updateCategory(category?.id, categoryName);
-                } else {
-                  await createCategory(categoryName);
-                }
-                finalize();
+                await createCategory(categoryName);
               }
-            }}
-          />
-          <Button title={getString('common.cancel')} onPress={close} />
-        </View>
-      </Modal>
-    </Portal>
+              finalize();
+            }
+          }}
+        >
+          {getString(isEditMode ? 'common.ok' : 'common.add')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default AddCategoryModal;
-
-const styles = StyleSheet.create({
-  btnContainer: {
-    flexDirection: 'row-reverse',
-    marginTop: 24,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-});

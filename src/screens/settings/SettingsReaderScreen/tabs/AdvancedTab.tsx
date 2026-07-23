@@ -8,10 +8,10 @@ import {
   Platform,
 } from 'react-native';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { TextInput, Portal } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import NativeFile from '@modules/native-file'
+import NativeFile from '@modules/native-file';
 import { useTheme, useChapterReaderSettings } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
@@ -275,23 +275,20 @@ if (title) {
         <View style={styles.bottomSpacing} />
       </BottomSheetScrollView>
 
-      {/* Confirmation Dialogs */}
-      <Portal>
-        <ConfirmationDialog
-          title={getString('readerSettings.clearCustomCSS')}
-          visible={clearCSSModal.value}
-          onSubmit={confirmResetCSS}
-          onDismiss={clearCSSModal.setFalse}
-          theme={theme}
-        />
-        <ConfirmationDialog
-          title={getString('readerSettings.clearCustomJS')}
-          visible={clearJSModal.value}
-          onSubmit={confirmResetJS}
-          onDismiss={clearJSModal.setFalse}
-          theme={theme}
-        />
-      </Portal>
+      <ConfirmationDialog
+        title={getString('readerSettings.clearCustomCSS')}
+        confirmLabel={getString('common.clear')}
+        visible={clearCSSModal.value}
+        onConfirm={confirmResetCSS}
+        onDismiss={clearCSSModal.setFalse}
+      />
+      <ConfirmationDialog
+        title={getString('readerSettings.clearCustomJS')}
+        confirmLabel={getString('common.clear')}
+        visible={clearJSModal.value}
+        onConfirm={confirmResetJS}
+        onDismiss={clearJSModal.setFalse}
+      />
     </KeyboardAvoidingView>
   );
 };

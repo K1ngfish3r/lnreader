@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
-import { Divider, Portal } from 'react-native-paper';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-import { Button, Modal } from '@components/index';
+import { Dialog } from '@components/index';
 
 import { useTheme } from '@hooks/persisted';
 
@@ -48,17 +47,15 @@ const SetCategoryModal: React.FC<SetCategoryModalProps> = ({
   }, [getCategories, visible]);
 
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={() => {
-          closeModal();
-          setSelectedCategories([]);
-        }}
-      >
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {getString('categories.setCategories')}
-        </Text>
+    <Dialog.Root
+      visible={visible}
+      onDismiss={() => {
+        closeModal();
+        setSelectedCategories([]);
+      }}
+    >
+      <Dialog.Title>{getString('categories.setCategories')}</Dialog.Title>
+      <Dialog.ScrollArea>
         <FlatList
           data={categories}
           style={styles.categoryList}
@@ -72,56 +69,48 @@ const SetCategoryModal: React.FC<SetCategoryModalProps> = ({
               onPress={() =>
                 setSelectedCategories(xor(selectedCategories, [item]))
               }
-              viewStyle={styles.checkboxView}
               theme={theme}
             />
           )}
           ListEmptyComponent={
-            <Text style={{ color: theme.onSurfaceVariant }}>
+            <Text
+              style={[styles.emptyMessage, { color: theme.onSurfaceVariant }]}
+            >
               {getString('categories.setModalEmptyMsg')}
             </Text>
           }
         />
-        <Divider
-          style={[
-            {
-              backgroundColor: theme.onSurfaceDisabled,
-            },
-            styles.divider,
-          ]}
-        />
-        <View style={styles.btnContainer}>
-          <Button
-            title={getString('common.edit')}
-            onPress={() => {
-              navigate('MoreStack', {
-                screen: 'Categories',
-              });
-              closeModal();
-              onEditCategories?.();
-            }}
-          />
-          <View style={styles.flex} />
-          <Button
-            title={getString('common.cancel')}
-            onPress={() => {
-              closeModal();
-            }}
-          />
-          <Button
-            title={getString('common.ok')}
-            onPress={async () => {
-              await updateNovelCategories(
-                novelIds,
-                selectedCategories.map(category => category.id),
-              );
-              closeModal();
-              onSuccess?.();
-            }}
-          />
-        </View>
-      </Modal>
-    </Portal>
+      </Dialog.ScrollArea>
+      <Dialog.Actions>
+        <Dialog.Action
+          onPress={() => {
+            navigate('MoreStack', {
+              screen: 'Categories',
+            });
+            closeModal();
+            onEditCategories?.();
+          }}
+        >
+          {getString('common.edit')}
+        </Dialog.Action>
+        <View style={styles.flex} />
+        <Dialog.Action onPress={closeModal}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action
+          onPress={async () => {
+            await updateNovelCategories(
+              novelIds,
+              selectedCategories.map(category => category.id),
+            );
+            closeModal();
+            void onSuccess?.();
+          }}
+        >
+          {getString('common.ok')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -131,23 +120,11 @@ const styles = StyleSheet.create({
   categoryList: {
     maxHeight: Dimensions.get('window').height * 0.4,
   },
-  divider: { height: 1, width: '90%', marginLeft: '5%' },
-  btnContainer: {
-    flexDirection: 'row',
-    marginTop: 20,
-  },
-  checkboxView: {
-    marginBottom: 5,
+  emptyMessage: {
+    paddingHorizontal: 24,
+    paddingVertical: 16,
   },
   flex: {
     flex: 1,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  modelOption: {
-    fontSize: 15,
-    marginVertical: 10,
   },
 });

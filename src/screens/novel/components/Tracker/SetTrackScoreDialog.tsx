@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
 
-import { Button, DialogTitle, Modal } from '@components';
+import { Dialog } from '@components';
 import { getString } from '@strings/translations';
 import {
   AniListScoreSelector,
@@ -11,20 +10,15 @@ import {
 } from './ScoreSelectors';
 import { TrackScoreDialogProps } from './types';
 
-const SetTrackScoreDialog: React.FC<TrackScoreDialogProps> = ({
+type SetTrackScoreDialogContentProps = Omit<TrackScoreDialogProps, 'visible'>;
+
+const SetTrackScoreDialogContent: React.FC<SetTrackScoreDialogContentProps> = ({
   tracker,
   trackItem,
-  visible,
   onDismiss,
   onUpdateScore,
 }) => {
   const [selectedScore, setSelectedScore] = useState(trackItem.score);
-
-  useEffect(() => {
-    if (visible) {
-      setSelectedScore(trackItem.score);
-    }
-  }, [visible, trackItem.score]);
 
   const handleSave = () => {
     onUpdateScore(selectedScore);
@@ -67,24 +61,28 @@ const SetTrackScoreDialog: React.FC<TrackScoreDialogProps> = ({
   }, [tracker, trackItem, selectedScore]);
 
   return (
-    <Modal visible={visible} onDismiss={onDismiss}>
-      <DialogTitle title="Score" />
-      {ScoreSelector}
-      <View style={styles.buttonContainer}>
-        <Button onPress={onDismiss}>{getString('common.cancel')}</Button>
-        <Button onPress={handleSave}>{getString('common.save')}</Button>
-      </View>
-    </Modal>
+    <Dialog.Root visible onDismiss={onDismiss}>
+      <Dialog.Title>Score</Dialog.Title>
+      {tracker.name === 'Kitsu' || tracker.name === 'AniList' ? (
+        <Dialog.ScrollArea>{ScoreSelector}</Dialog.ScrollArea>
+      ) : (
+        <Dialog.Content>{ScoreSelector}</Dialog.Content>
+      )}
+      <Dialog.Actions>
+        <Dialog.Action onPress={onDismiss}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action onPress={handleSave}>
+          {getString('common.save')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
-export default SetTrackScoreDialog;
+const SetTrackScoreDialog: React.FC<TrackScoreDialogProps> = ({
+  visible,
+  ...props
+}) => (visible ? <SetTrackScoreDialogContent {...props} /> : null);
 
-const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginTop: 16,
-  },
-});
+export default SetTrackScoreDialog;

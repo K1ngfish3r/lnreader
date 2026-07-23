@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View, TextInput } from 'react-native';
 
-import { Button, IconButton, Portal } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { ThemeColors } from '@theme/types';
 import { ChapterInfo, NovelInfo } from '@database/types';
 import { getString } from '@strings/translations';
-import { Modal } from '@components';
+import { Dialog } from '@components';
 
 interface DownloadCustomChapterModalProps {
   theme: ThemeColors;
@@ -48,25 +48,33 @@ const DownloadCustomChapterModal = ({
   };
 
   return (
-    <Portal>
-      <Modal visible={modalVisible} onDismiss={onDismiss}>
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {getString('novelScreen.download.customAmount')}
-        </Text>
+    <Dialog.Root visible={modalVisible} onDismiss={onDismiss}>
+      <Dialog.Title>
+        {getString('novelScreen.download.customAmount')}
+      </Dialog.Title>
+      <Dialog.Content>
         <View style={styles.row}>
           <IconButton
             icon="chevron-double-left"
             animated
             size={24}
             iconColor={theme.primary}
-            onPress={() => text > 9 && setText(prevState => prevState - 10)}
+            onPress={() => {
+              if (text > 9) {
+                setText(prevState => prevState - 10);
+              }
+            }}
           />
           <IconButton
             icon="chevron-left"
             animated
             size={24}
             iconColor={theme.primary}
-            onPress={() => text > 0 && setText(prevState => prevState - 1)}
+            onPress={() => {
+              if (text > 0) {
+                setText(prevState => prevState - 1);
+              }
+            }}
           />
           <TextInput
             value={text.toString()}
@@ -90,29 +98,21 @@ const DownloadCustomChapterModal = ({
             onPress={() => setText(prevState => prevState + 10)}
           />
         </View>
-        <Button
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action title={getString('common.cancel')} onPress={onDismiss} />
+        <Dialog.Action
+          title={getString('libraryScreen.bottomSheet.display.download')}
           onPress={onSubmit}
-          textColor={theme.onPrimary}
-          buttonColor={theme.primary}
-        >
-          {getString('libraryScreen.bottomSheet.display.download')}
-        </Button>
-      </Modal>
-    </Portal>
+        />
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default DownloadCustomChapterModal;
 
 const styles = StyleSheet.create({
-  errorText: {
-    color: '#FF0033',
-    paddingTop: 8,
-  },
-  modalTitle: {
-    fontSize: 16,
-    marginBottom: 16,
-  },
   row: { flexDirection: 'row', justifyContent: 'center' },
   marginHorizontal: { marginHorizontal: 4 },
 });

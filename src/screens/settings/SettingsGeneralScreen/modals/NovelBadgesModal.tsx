@@ -1,9 +1,6 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
 
-import { Portal } from 'react-native-paper';
-
-import { Checkbox, Modal } from '@components';
+import { Checkbox, Dialog } from '@components';
 import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import { useLibrarySettings } from '@hooks/persisted';
@@ -26,11 +23,14 @@ const NovelBadgesModal: React.FC<NovelBadgesModalProps> = ({
     setLibrarySettings,
   } = useLibrarySettings();
   return (
-    <Portal>
-      <Modal visible={novelBadgesModalVisible} onDismiss={hideNovelBadgesModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
-          {getString('libraryScreen.bottomSheet.display.badges')}
-        </Text>
+    <Dialog.Root
+      visible={novelBadgesModalVisible}
+      onDismiss={hideNovelBadgesModal}
+    >
+      <Dialog.Title>
+        {getString('libraryScreen.bottomSheet.display.badges')}
+      </Dialog.Title>
+      <Dialog.List>
         <Checkbox
           label={getString('libraryScreen.bottomSheet.display.downloadBadges')}
           status={showDownloadBadges}
@@ -61,20 +61,9 @@ const NovelBadgesModal: React.FC<NovelBadgesModalProps> = ({
           }
           theme={theme}
         />
-      </Modal>
-    </Portal>
+      </Dialog.List>
+    </Dialog.Root>
   );
 };
 
 export default NovelBadgesModal;
-
-const styles = StyleSheet.create({
-  modalDescription: {
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 10,
-  },
-});

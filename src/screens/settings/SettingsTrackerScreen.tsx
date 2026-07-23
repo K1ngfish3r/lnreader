@@ -1,15 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import {
-  Portal,
-  Text,
-  Button,
-  Provider,
-  List as PaperList,
-} from 'react-native-paper';
+import { Provider, List as PaperList } from 'react-native-paper';
 
 import { getTracker, useTheme, useTracker } from '@hooks/persisted';
-import { Appbar, List, Modal, SafeAreaView } from '@components';
+import { Appbar, ConfirmationDialog, List, SafeAreaView } from '@components';
 import { TrackerSettingsScreenProps } from '@navigators/types';
 import { getString } from '@strings/translations';
 import TrackerLoginDialog from './components/TrackerLoginDialog';
@@ -318,49 +312,29 @@ const TrackerScreen = ({ navigation }: TrackerSettingsScreenProps) => {
             ) : null}
           </List.Section>
 
-          <Portal>
-            <Modal visible={visible} onDismiss={hideModal}>
-              <Text style={[{ color: theme.onSurface }, styles.modalText]}>
-                {getString('trackingScreen.logOutMessage', {
-                  name: logoutTrackerName,
-                })}
-              </Text>
-              <View style={styles.modalButtonRow}>
-                <Button
-                  style={styles.modalButton}
-                  labelStyle={[
-                    { color: theme.primary },
-                    styles.modalButtonLabel,
-                  ]}
-                  onPress={hideModal}
-                >
-                  {getString('common.cancel')}
-                </Button>
-                <Button
-                  style={styles.modalButton}
-                  labelStyle={[
-                    { color: theme.primary },
-                    styles.modalButtonLabel,
-                  ]}
-                  onPress={() => {
-                    removeTracker(logoutTrackerName as any);
-                    hideModal();
-                  }}
-                >
-                  {getString('common.logout')}
-                </Button>
-              </View>
-            </Modal>
-            <TrackerLoginDialog
-              visible={credentialLoginTracker !== null}
-              trackerName={credentialLoginTracker || ''}
-              onDismiss={hideCredentialLogin}
-              onSubmit={handleCredentialLogin}
-              usernameLabel={
-                credentialLoginTracker === 'Kitsu' ? 'Email' : 'Username'
-              }
-            />
-          </Portal>
+          <ConfirmationDialog
+            title={getString('common.logout')}
+            message={getString('trackingScreen.logOutMessage', {
+              name: logoutTrackerName,
+            })}
+            visible={visible}
+            confirmLabel={getString('common.logout')}
+            confirmTone="danger"
+            onConfirm={() => {
+              removeTracker(logoutTrackerName as any);
+              hideModal();
+            }}
+            onDismiss={hideModal}
+          />
+          <TrackerLoginDialog
+            visible={credentialLoginTracker !== null}
+            trackerName={credentialLoginTracker || ''}
+            onDismiss={hideCredentialLogin}
+            onSubmit={handleCredentialLogin}
+            usernameLabel={
+              credentialLoginTracker === 'Kitsu' ? 'Email' : 'Username'
+            }
+          />
         </View>
       </Provider>
     </SafeAreaView>
@@ -375,20 +349,6 @@ const styles = StyleSheet.create({
   },
   screenPadding: {
     paddingVertical: 8,
-  },
-  modalText: {
-    fontSize: 18,
-  },
-  modalButtonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  modalButton: {
-    marginTop: 30,
-  },
-  modalButtonLabel: {
-    letterSpacing: 0,
-    textTransform: 'none',
   },
   logoContainer: {
     paddingLeft: 16,

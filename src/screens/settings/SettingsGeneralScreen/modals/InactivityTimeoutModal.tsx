@@ -1,13 +1,9 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
 
-import { Portal } from 'react-native-paper';
-
-import { RadioButton } from '@components/RadioButton/RadioButton';
+import { Dialog, RadioButton } from '@components';
 import { ThemeColors } from '@theme/types';
 import { useAppSettings } from '@hooks/persisted';
 import { getString } from '@strings/translations';
-import { Modal } from '@components';
 
 interface InactivityTimeoutModalProps {
   inactivityTimeoutMs: number | undefined;
@@ -25,14 +21,16 @@ const InactivityTimeoutModal: React.FC<InactivityTimeoutModalProps> = ({
   const { setAppSettings } = useAppSettings();
 
   return (
-    <Portal>
-      <Modal visible={modalVisible} onDismiss={hideModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
+    <Dialog.Root visible={modalVisible} onDismiss={hideModal}>
+      <Dialog.Header>
+        <Dialog.Title>
           {getString('generalSettingsScreen.inactivityTimeout')}
-        </Text>
-        <Text style={{ color: theme.onSurface }}>
+        </Dialog.Title>
+        <Dialog.Description>
           {getString('generalSettingsScreen.inactivityTimeoutDesc')}
-        </Text>
+        </Dialog.Description>
+      </Dialog.Header>
+      <Dialog.List>
         <RadioButton
           key={0}
           status={inactivityTimeoutMs === undefined}
@@ -44,21 +42,16 @@ const InactivityTimeoutModal: React.FC<InactivityTimeoutModalProps> = ({
           <RadioButton
             key={time}
             status={inactivityTimeoutMs === time * 60 * 1000}
-            onPress={() => setAppSettings({ inactivityTimeoutMs: time * 60 * 1000 })}
+            onPress={() =>
+              setAppSettings({ inactivityTimeoutMs: time * 60 * 1000 })
+            }
             label={`${getString('time.minutes', { count: time })}`}
             theme={theme}
           />
         ))}
-      </Modal>
-    </Portal>
+      </Dialog.List>
+    </Dialog.Root>
   );
 };
 
 export default InactivityTimeoutModal;
-
-const styles = StyleSheet.create({
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 10,
-  },
-});

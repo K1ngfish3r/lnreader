@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import { Portal, Text, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 import { deleteCachedNovels, useTheme, useUserAgent } from '@hooks/persisted';
 import { showToast } from '@utils/showToast';
@@ -13,9 +13,9 @@ import {
   clearUpdates,
 } from '@database/queries/ChapterQueries';
 
-import { Appbar, Button, List, Modal, SafeAreaView } from '@components';
+import { Appbar, Dialog, List, SafeAreaView } from '@components';
 import { AdvancedSettingsScreenProps } from '@navigators/types';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { getUserAgentSync } from 'react-native-device-info';
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import { store } from '@plugins/helpers/storage';
@@ -99,40 +99,46 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
           />
         </List.Section>
       </ScrollView>
-      <Portal>
-        <ConfirmationDialog
-          message={getString(
-            'advancedSettingsScreen.deleteReadChaptersDialogTitle',
-          )}
-          visible={deleteReadChaptersDialog}
-          onSubmit={deleteReadChaptersFromDb}
-          onDismiss={hideDeleteReadChaptersDialog}
-          theme={theme}
-        />
-        <ConfirmationDialog
-          message={getString('advancedSettingsScreen.clearDatabaseWarning')}
-          visible={clearDatabaseDialog}
-          onSubmit={deleteCachedNovels}
-          onDismiss={hideClearDatabaseDialog}
-          theme={theme}
-        />
-        <ConfirmationDialog
-          message={getString('advancedSettingsScreen.clearUpdatesWarning')}
-          visible={clearUpdatesDialog}
-          onSubmit={() => {
-            clearUpdates();
-            showToast(getString('advancedSettingsScreen.clearUpdatesMessage'));
-            hideClearUpdatesDialog();
-          }}
-          onDismiss={hideClearUpdatesDialog}
-          theme={theme}
-        />
+      <ConfirmationDialog
+        title={getString('advancedSettingsScreen.deleteReadChapters')}
+        confirmLabel={getString('common.delete')}
+        message={getString(
+          'advancedSettingsScreen.deleteReadChaptersDialogTitle',
+        )}
+        visible={deleteReadChaptersDialog}
+        onConfirm={deleteReadChaptersFromDb}
+        onDismiss={hideDeleteReadChaptersDialog}
+      />
+      <ConfirmationDialog
+        title={getString('advancedSettingsScreen.clearCachedNovels')}
+        confirmLabel={getString('common.clear')}
+        message={getString('advancedSettingsScreen.clearDatabaseWarning')}
+        visible={clearDatabaseDialog}
+        onConfirm={deleteCachedNovels}
+        onDismiss={hideClearDatabaseDialog}
+      />
+      <ConfirmationDialog
+        title={getString('advancedSettingsScreen.clearUpdatesTab')}
+        confirmLabel={getString('common.clear')}
+        message={getString('advancedSettingsScreen.clearUpdatesWarning')}
+        visible={clearUpdatesDialog}
+        onConfirm={() => {
+          clearUpdates();
+          showToast(getString('advancedSettingsScreen.clearUpdatesMessage'));
+          hideClearUpdatesDialog();
+        }}
+        onDismiss={hideClearUpdatesDialog}
+      />
 
-        <Modal visible={userAgentModalVisible} onDismiss={hideUserAgentModal}>
-          <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-            {getString('advancedSettingsScreen.userAgent')}
-          </Text>
-          <Text style={{ color: theme.onSurfaceVariant }}>{userAgent}</Text>
+      <Dialog.Root
+        visible={userAgentModalVisible}
+        onDismiss={hideUserAgentModal}
+      >
+        <Dialog.Title>
+          {getString('advancedSettingsScreen.userAgent')}
+        </Dialog.Title>
+        <Dialog.Description>{userAgent}</Dialog.Description>
+        <Dialog.Content>
           <TextInput
             multiline
             mode="outlined"
@@ -143,27 +149,24 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
             style={[{ color: theme.onSurface }, styles.textInput]}
             theme={{ colors: { ...theme } }}
           />
-          <View style={styles.buttonGroup}>
-            <Button
-              onPress={() => {
-                setUserAgent(userAgentInput);
-                hideUserAgentModal();
-              }}
-              style={styles.button}
-              title={getString('common.save')}
-              mode="contained"
-            />
-            <Button
-              style={styles.button}
-              onPress={() => {
-                setUserAgent(getUserAgentSync());
-                hideUserAgentModal();
-              }}
-              title={getString('common.reset')}
-            />
-          </View>
-        </Modal>
-      </Portal>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Dialog.Action
+            onPress={() => {
+              setUserAgent(getUserAgentSync());
+              hideUserAgentModal();
+            }}
+            title={getString('common.reset')}
+          />
+          <Dialog.Action
+            onPress={() => {
+              setUserAgent(userAgentInput);
+              hideUserAgentModal();
+            }}
+            title={getString('common.save')}
+          />
+        </Dialog.Actions>
+      </Dialog.Root>
     </SafeAreaView>
   );
 };
@@ -171,23 +174,9 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
 export default AdvancedSettings;
 
 const styles = StyleSheet.create({
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-    marginTop: 16,
-  },
-  buttonGroup: {
-    flexDirection: 'row-reverse',
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
   textInput: {
     borderRadius: 14,
     fontSize: 12,
     height: 120,
-    marginBottom: 8,
-    marginTop: 16,
   },
 });

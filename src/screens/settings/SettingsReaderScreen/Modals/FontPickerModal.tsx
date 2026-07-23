@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { Portal } from 'react-native-paper';
-import { RadioButton } from '@components/RadioButton/RadioButton';
+import { Dialog, RadioButton } from '@components';
 
 import { useChapterReaderSettings, useTheme } from '@hooks/persisted';
 
 import { readerFonts } from '@utils/constants/readerConstants';
-import { Modal } from '@components';
+import { getString } from '@strings/translations';
 
 interface FontPickerModalProps {
   visible: boolean;
@@ -23,8 +22,11 @@ const FontPickerModal: React.FC<FontPickerModalProps> = ({
   const { setChapterReaderSettings } = useChapterReaderSettings();
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={onDismiss}>
+    <Dialog.Root visible={visible} onDismiss={onDismiss}>
+      <Dialog.Title>
+        {getString('readerScreen.bottomSheet.fontStyle')}
+      </Dialog.Title>
+      <Dialog.List>
         {readerFonts.map(item => (
           <RadioButton
             key={item.fontFamily}
@@ -37,8 +39,13 @@ const FontPickerModal: React.FC<FontPickerModalProps> = ({
             theme={theme}
           />
         ))}
-      </Modal>
-    </Portal>
+      </Dialog.List>
+      <Dialog.Actions>
+        <Dialog.Action onPress={onDismiss}>
+          {getString('common.ok')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 

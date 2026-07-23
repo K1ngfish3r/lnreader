@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Portal, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
-import { Button, Modal } from '@components/index';
+import { Dialog } from '@components/index';
 
 import { Repository } from '@database/types';
 import { useTheme } from '@hooks/persisted';
@@ -26,11 +25,11 @@ const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
   const [repositoryUrl, setRepositoryUrl] = useState(repository?.url || '');
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={closeModal}>
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {repository ? 'Edit repository' : 'Add repository'}
-        </Text>
+    <Dialog.Root visible={visible} onDismiss={closeModal}>
+      <Dialog.Title>
+        {repository ? 'Edit repository' : 'Add repository'}
+      </Dialog.Title>
+      <Dialog.Content>
         <TextInput
           autoFocus
           defaultValue={repositoryUrl}
@@ -40,30 +39,22 @@ const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
           underlineColor={theme.outline}
           theme={{ colors: { ...theme } }}
         />
-        <View style={styles.btnContainer}>
-          <Button
-            title={getString(repository ? 'common.ok' : 'common.add')}
-            onPress={() => {
-              upsertRepository(repositoryUrl, repository);
-              closeModal();
-            }}
-          />
-          <Button title={getString('common.cancel')} onPress={closeModal} />
-        </View>
-      </Modal>
-    </Portal>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action onPress={closeModal}>
+          {getString('common.cancel')}
+        </Dialog.Action>
+        <Dialog.Action
+          onPress={() => {
+            upsertRepository(repositoryUrl, repository);
+            closeModal();
+          }}
+        >
+          {getString(repository ? 'common.ok' : 'common.add')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default AddRepositoryModal;
-
-const styles = StyleSheet.create({
-  btnContainer: {
-    flexDirection: 'row-reverse',
-    marginTop: 24,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-});

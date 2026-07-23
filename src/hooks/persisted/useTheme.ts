@@ -33,8 +33,15 @@ const getElevationColor = (colors: ThemeColors, elevation: number): string => {
     .string();
 };
 
+const getSurfaceContainerHigh = (colors: ThemeColors): string =>
+  Color(colors.surface)
+    .mix(Color(colors.onSurface), colors.isDark ? 0.1 : 0.08)
+    .rgb()
+    .string();
+
 const addComputedColors = (colors: ThemeColors): ThemeColors => ({
   ...colors,
+  surfaceContainerHigh: getSurfaceContainerHigh(colors),
   surface2: getElevationColor(colors, 0.08),
   overlay3: overlay(3, colors.surface),
   rippleColor: Color(colors.primary).alpha(0.12).toString(),

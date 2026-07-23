@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, SectionList, Text } from 'react-native';
 import dayjs from 'dayjs';
-import { Portal } from 'react-native-paper';
 
 import {
   EmptyView,
@@ -143,14 +142,11 @@ const HistoryScreen = ({ navigation }: HistoryScreenProps) => {
               />
             }
           />
-          <Portal>
-            <ClearHistoryDialog
-              visible={clearHistoryDialogVisible}
-              onSubmit={clearAllHistory}
-              onDismiss={closeClearHistoryDialog}
-              theme={theme}
-            />
-          </Portal>
+          <ClearHistoryDialog
+            visible={clearHistoryDialogVisible}
+            onSubmit={clearAllHistory}
+            onDismiss={closeClearHistoryDialog}
+          />
         </>
       )}
     </SafeAreaView>

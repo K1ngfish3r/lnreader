@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, FlatList, Text, View, FlatListProps } from 'react-native';
-import { Portal } from 'react-native-paper';
+import { useState } from 'react';
+import { StyleSheet, FlatList, Text, FlatListProps } from 'react-native';
 import GlobalSearchNovelCover from '../globalsearch/GlobalSearchNovelCover';
 
 import { showToast } from '@utils/showToast';
-import { Button, Modal } from '@components';
+import { Dialog } from '@components';
 import { getString } from '@strings/translations';
 import { MigrateNovelScreenProps } from '@navigators/types';
 import { NovelInfo } from '@database/types';
@@ -89,42 +88,37 @@ const MigrationNovelList = ({
           </Text>
         }
       />
-      <Portal>
-        <Modal visible={migrateNovelDialog} onDismiss={hideMigrateNovelDialog}>
-          <Text
-            style={[
-              {
-                color: theme.onSurface,
-              },
-              styles.text,
-            ]}
-          >
-            {getString('browseScreen.migration.dialogMessage', {
-              url: selectedNovel.name,
-            })}
-          </Text>
-          <View style={styles.row}>
-            <Button
-              onPress={hideMigrateNovelDialog}
-              title={getString('common.cancel')}
-            />
-            <Button
-              onPress={() => {
-                hideMigrateNovelDialog();
-                backgroundTasks.enqueue({
-                  name: 'MIGRATE_NOVEL',
-                  data: {
-                    pluginId,
-                    fromNovel,
-                    toNovelPath: selectedNovel.path,
-                  },
-                });
-              }}
-              title={getString('novelScreen.migrate')}
-            />
-          </View>
-        </Modal>
-      </Portal>
+      <Dialog.Root
+        visible={migrateNovelDialog}
+        onDismiss={hideMigrateNovelDialog}
+      >
+        <Dialog.Title>{getString('novelScreen.migrate')}</Dialog.Title>
+        <Dialog.Description>
+          {getString('browseScreen.migration.dialogMessage', {
+            url: selectedNovel.name,
+          })}
+        </Dialog.Description>
+        <Dialog.Actions>
+          <Dialog.Action
+            onPress={hideMigrateNovelDialog}
+            title={getString('common.cancel')}
+          />
+          <Dialog.Action
+            onPress={() => {
+              hideMigrateNovelDialog();
+              backgroundTasks.enqueue({
+                name: 'MIGRATE_NOVEL',
+                data: {
+                  pluginId,
+                  fromNovel,
+                  toNovelPath: selectedNovel.path,
+                },
+              });
+            }}
+            title={getString('novelScreen.migrate')}
+          />
+        </Dialog.Actions>
+      </Dialog.Root>
     </>
   );
 };
@@ -136,14 +130,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 4,
     paddingVertical: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  text: {
-    fontSize: 18,
-    marginBottom: 16,
   },
   padding: { padding: 8, paddingVertical: 4 },
 });

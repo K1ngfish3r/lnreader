@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ThemeColors } from '@theme/types';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { Portal, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import { GoogleSignin, User } from '@react-native-google-signin/google-signin';
-import { Button, EmptyView, Modal } from '@components';
+import { Button, Dialog, EmptyView } from '@components';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import * as Clipboard from 'expo-clipboard';
 import { showToast } from '@utils/showToast';
@@ -177,32 +177,34 @@ function RestoreBackup({
 
   return (
     <>
-      <FlatList
-        contentContainerStyle={styles.backupList}
-        data={backupList}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <Button
-            mode="outlined"
-            style={styles.btnOutline}
-            onPress={() => {
-              closeModal();
-              backgroundTasks.enqueue({
-                name: 'DRIVE_RESTORE',
-                data: item,
-              });
-            }}
-          >
-            <Text style={{ color: theme.primary }}>
-              {item.name?.replace(/\.backup$/, ' ')}
-            </Text>
-            <Text style={[{ color: theme.secondary }, styles.fontSize]}>
-              {'(' + dayjs(item.createdTime).format('LL') + ')'}
-            </Text>
-          </Button>
-        )}
-        ListEmptyComponent={emptyComponent}
-      />
+      <Dialog.ScrollArea>
+        <FlatList
+          contentContainerStyle={styles.backupList}
+          data={backupList}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <Button
+              mode="outlined"
+              style={styles.btnOutline}
+              onPress={() => {
+                closeModal();
+                backgroundTasks.enqueue({
+                  name: 'DRIVE_RESTORE',
+                  data: item,
+                });
+              }}
+            >
+              <Text style={{ color: theme.primary }}>
+                {item.name?.replace(/\.backup$/, ' ')}
+              </Text>
+              <Text style={[{ color: theme.secondary }, styles.fontSize]}>
+                {'(' + dayjs(item.createdTime).format('LL') + ')'}
+              </Text>
+            </Button>
+          )}
+          ListEmptyComponent={emptyComponent}
+        />
+      </Dialog.ScrollArea>
       <View style={styles.footerContainer}>
         <Button
           title={getString('common.cancel')}
@@ -280,40 +282,36 @@ export default function GoogleDriveModal({
   };
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={closeModal}>
-        <>
-          <View style={styles.titleContainer}>
-            <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-              {getString('backupScreen.drive.googleDriveBackup')}
-            </Text>
-            <TouchableOpacity
-              onLongPress={() => {
-                if (user?.user.email) {
-                  Clipboard.setStringAsync(user.user.email).then(success => {
-                    if (success) {
-                      showToast(
-                        getString('common.copiedToClipboard', {
-                          name: user.user.email,
-                        }),
-                      );
-                    }
-                  });
+    <Dialog.Root visible={visible} onDismiss={closeModal}>
+      <Dialog.Header style={styles.titleContainer}>
+        <Dialog.Title>
+          {getString('backupScreen.drive.googleDriveBackup')}
+        </Dialog.Title>
+        <TouchableOpacity
+          onLongPress={() => {
+            if (user?.user.email) {
+              Clipboard.setStringAsync(user.user.email).then(success => {
+                if (success) {
+                  showToast(
+                    getString('common.copiedToClipboard', {
+                      name: user.user.email,
+                    }),
+                  );
                 }
-              }}
-            >
-              {user ? (
-                <Image
-                  source={{ uri: user?.user.photo || '' }}
-                  style={styles.avatar}
-                />
-              ) : null}
-            </TouchableOpacity>
-          </View>
-          {renderModal()}
-        </>
-      </Modal>
-    </Portal>
+              });
+            }
+          }}
+        >
+          {user ? (
+            <Image
+              source={{ uri: user?.user.photo || '' }}
+              style={styles.avatar}
+            />
+          ) : null}
+        </TouchableOpacity>
+      </Dialog.Header>
+      <Dialog.Content>{renderModal()}</Dialog.Content>
+    </Dialog.Root>
   );
 }
 
@@ -344,14 +342,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: '100%',
   },
-  modalTitle: {
-    fontSize: 24,
-  },
   titleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
     textAlignVertical: 'center',
   },
   fontSize: { fontSize: 12 },

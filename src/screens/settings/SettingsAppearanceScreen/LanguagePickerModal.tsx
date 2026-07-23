@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { Dialog, Portal } from 'react-native-paper';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useTheme } from '@hooks/persisted';
-import { Modal, RadioButton } from '@components';
+import { Dialog, RadioButton } from '@components';
 import { getString, setLocale } from '@strings/translations';
 import { useMMKVString } from 'react-native-mmkv';
 import { FlatList } from 'react-native-gesture-handler';
@@ -84,18 +83,18 @@ const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
   };
 
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={styles.maxHeight}
-      >
-        <Dialog.Title theme={{ colors: theme }} style={styles.zeroPadding}>
-          {getString('appearanceScreen.appLanguage')}
-        </Dialog.Title>
-        <Text style={[styles.noteText, { color: theme.onSurfaceVariant }]}>
+    <Dialog.Root
+      visible={visible}
+      onDismiss={onDismiss}
+      surfaceStyle={styles.maxHeight}
+    >
+      <Dialog.Header>
+        <Dialog.Title>{getString('appearanceScreen.appLanguage')}</Dialog.Title>
+        <Dialog.Description>
           {getString('appearanceScreen.languagePickerModal.restartNote')}
-        </Text>
+        </Dialog.Description>
+      </Dialog.Header>
+      <Dialog.ScrollArea>
         <FlatList
           data={languages}
           keyExtractor={item => item.locale}
@@ -106,22 +105,16 @@ const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
               onPress={() => handleLanguageSelect(item.locale)}
               label={item.nativeName}
               theme={theme}
-              style={styles.zeroPadding}
             />
           )}
         />
-      </Modal>
-    </Portal>
+      </Dialog.ScrollArea>
+    </Dialog.Root>
   );
 };
 
 export default LanguagePickerModal;
 
 const styles = StyleSheet.create({
-  noteText: {
-    lineHeight: 20,
-    marginBottom: 8,
-  },
-  zeroPadding: { paddingHorizontal: 0, marginHorizontal: 0, marginTop: 0 },
   maxHeight: { maxHeight: '60%' },
 });

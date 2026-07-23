@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { Pressable, View, StyleSheet, Text, ScrollView } from 'react-native';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import Slider from '@react-native-community/slider';
 import { getAvailableVoicesAsync, Voice } from 'expo-speech';
@@ -16,8 +10,8 @@ import {
   useChapterReaderSettings,
 } from '@hooks/persisted';
 import { getString } from '@strings/translations';
-import { List, Button } from '@components/index';
-import { Portal, Modal, Chip } from 'react-native-paper';
+import { Dialog, List, Button } from '@components/index';
+import { Chip } from 'react-native-paper';
 import ReaderSheetPreferenceItem from './ReaderSheetPreferenceItem';
 
 interface VoicePickerModalProps {
@@ -85,28 +79,19 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
     });
   };
 
-  useEffect(() => {
-    // Reset to system language when modal opens
-    if (visible) {
-      setSelectedLanguages([]);
-    }
-  }, [visible]);
+  const handleDismiss = () => {
+    setSelectedLanguages([]);
+    onDismiss();
+  };
 
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={[
-          styles.modalContent,
-          { backgroundColor: theme.surface },
-        ]}
-      >
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          Select Voice
-        </Text>
-
-        {/* Language Filter */}
+    <Dialog.Root
+      visible={visible}
+      onDismiss={handleDismiss}
+      surfaceStyle={styles.modalContent}
+    >
+      <Dialog.Title>Select Voice</Dialog.Title>
+      <Dialog.Content>
         <View style={styles.languageFilterContainer}>
           <Text style={[styles.filterLabel, { color: theme.onSurfaceVariant }]}>
             Filter by language:
@@ -144,8 +129,8 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
             })}
           </ScrollView>
         </View>
-
-        {/* Voice List */}
+      </Dialog.Content>
+      <Dialog.ScrollArea>
         <ScrollView style={styles.voiceList}>
           {filteredVoices.length === 0 ? (
             <Text
@@ -155,7 +140,7 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
             </Text>
           ) : (
             filteredVoices.map((voice: Voice, index: number) => (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 style={[
                   styles.voiceItem,
@@ -165,7 +150,7 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
                 ]}
                 onPress={() => {
                   onSelect(voice);
-                  onDismiss();
+                  handleDismiss();
                 }}
               >
                 <View style={styles.voiceItemContent}>
@@ -174,7 +159,7 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
                   >
                     {voice.name}
                   </Text>
-                  {voice.language && (
+                  {voice.language ? (
                     <Text
                       style={[
                         styles.voiceItemLanguage,
@@ -183,26 +168,22 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
                     >
                       {voice.language}
                     </Text>
-                  )}
+                  ) : null}
                 </View>
-                {currentVoice?.identifier === voice.identifier && (
+                {currentVoice?.identifier === voice.identifier ? (
                   <Text style={[styles.checkIcon, { color: theme.primary }]}>
                     ✓
                   </Text>
-                )}
-              </TouchableOpacity>
+                ) : null}
+              </Pressable>
             ))
           )}
         </ScrollView>
-
-        <Button
-          title="Cancel"
-          mode="outlined"
-          onPress={onDismiss}
-          style={styles.cancelButton}
-        />
-      </Modal>
-    </Portal>
+      </Dialog.ScrollArea>
+      <Dialog.Actions>
+        <Dialog.Action onPress={handleDismiss}>Cancel</Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -246,9 +227,9 @@ const TTSTab: React.FC = () => {
             theme={theme}
           />
 
-          {TTSEnable && (
+          {TTSEnable ? (
             <>
-              <TouchableOpacity
+              <Pressable
                 style={styles.settingItem}
                 onPress={() => setVoiceModalVisible(true)}
               >
@@ -258,7 +239,7 @@ const TTSTab: React.FC = () => {
                 <Text style={[styles.value, { color: theme.onSurfaceVariant }]}>
                   {tts?.voice?.name || 'System'}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
               <View style={styles.sliderSection}>
                 <Text style={[styles.sliderLabel, { color: theme.onSurface }]}>
@@ -342,7 +323,7 @@ const TTSTab: React.FC = () => {
                 />
               </View>
             </>
-          )}
+          ) : null}
         </View>
 
         <View style={styles.bottomSpacing} />
@@ -406,15 +387,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   modalContent: {
-    margin: 20,
-    borderRadius: 8,
-    padding: 20,
     maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
   },
   languageFilterContainer: {
     marginBottom: 16,
@@ -435,11 +408,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   voiceItem: {
+    borderCurve: 'continuous',
+    borderRadius: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 4,
     marginBottom: 4,
   },
   voiceItemContent: {
@@ -456,9 +430,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     fontSize: 14,
-  },
-  cancelButton: {
-    marginTop: 16,
   },
   languageChipText: {
     fontSize: 12,

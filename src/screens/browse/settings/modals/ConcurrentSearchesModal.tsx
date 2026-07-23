@@ -1,13 +1,10 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
-import { Portal } from 'react-native-paper';
-
-import { RadioButton } from '@components/RadioButton/RadioButton';
+import { Dialog, RadioButton } from '@components';
 import { ThemeColors } from '@theme/types';
 import { getString } from '@strings/translations';
 import { useBrowseSettings } from '@hooks/persisted/index';
-import { Modal } from '@components';
 
 interface DisplayModeModalProps {
   globalSearchConcurrency: number;
@@ -25,33 +22,33 @@ const ConcurrentSearchesModal: React.FC<DisplayModeModalProps> = ({
   const { setBrowseSettings } = useBrowseSettings();
 
   return (
-    <Portal>
-      <Modal visible={modalVisible} onDismiss={hideModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
-          {getString('browseSettingsScreen.concurrentSearches')}
-        </Text>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(concurrency => (
-          <RadioButton
-            key={concurrency}
-            status={globalSearchConcurrency === concurrency}
-            onPress={() =>
-              setBrowseSettings({ globalSearchConcurrency: concurrency })
-            }
-            label={concurrency.toString()}
-            theme={theme}
-          />
-        ))}
-      </Modal>
-    </Portal>
+    <Dialog.Root visible={modalVisible} onDismiss={hideModal}>
+      <Dialog.Title>
+        {getString('browseSettingsScreen.concurrentSearches')}
+      </Dialog.Title>
+      <Dialog.ScrollArea>
+        <ScrollView style={styles.list}>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(concurrency => (
+            <RadioButton
+              key={concurrency}
+              status={globalSearchConcurrency === concurrency}
+              onPress={() =>
+                setBrowseSettings({ globalSearchConcurrency: concurrency })
+              }
+              label={concurrency.toString()}
+              theme={theme}
+            />
+          ))}
+        </ScrollView>
+      </Dialog.ScrollArea>
+    </Dialog.Root>
   );
 };
 
 export default ConcurrentSearchesModal;
 
 const styles = StyleSheet.create({
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 10,
-    paddingHorizontal: 24,
+  list: {
+    maxHeight: 480,
   },
 });

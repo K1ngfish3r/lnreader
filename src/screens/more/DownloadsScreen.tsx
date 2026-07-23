@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import { Appbar as MaterialAppbar } from 'react-native-paper';
@@ -139,7 +139,6 @@ const Downloads = ({ navigation }: DownloadsScreenProps) => {
           setChapters([]);
           hideDialog();
         }}
-        theme={theme}
       />
     </SafeAreaView>
   );

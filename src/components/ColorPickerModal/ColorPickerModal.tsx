@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Portal, TextInput } from 'react-native-paper';
-import { Button, Modal } from '@components';
+import { TextInput } from 'react-native-paper';
+import { Dialog } from '@components';
 import { ThemeColors } from '../../theme/types';
-import { Row } from '@components/Common';
 import { getString } from '@strings/translations';
 
 interface ColorPickerModalProps {
@@ -78,14 +77,12 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   ];
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={onDismiss}>
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {title}
-        </Text>
-        {showAccentColors ? (
+    <Dialog.Root visible={visible} onDismiss={onDismiss}>
+      <Dialog.Title>{title}</Dialog.Title>
+      {showAccentColors ? (
+        <Dialog.ScrollArea>
           <FlatList
-            contentContainerStyle={styles.marginBottom}
+            contentContainerStyle={styles.colorList}
             data={accentColors}
             numColumns={4}
             keyExtractor={item => item}
@@ -104,7 +101,9 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
               </View>
             )}
           />
-        ) : null}
+        </Dialog.ScrollArea>
+      ) : null}
+      <Dialog.Content>
         <TextInput
           value={text}
           defaultValue={typeof color === 'string' ? color : ''}
@@ -118,12 +117,15 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
           error={Boolean(error)}
         />
         <Text style={styles.errorText}>{error}</Text>
-        <Row style={styles.row}>
-          <Button title={getString('common.reset')} onPress={onReset} />
-          <Button title={getString('common.save')} onPress={onSubmitEditing} />
-        </Row>
-      </Modal>
-    </Portal>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action title={getString('common.reset')} onPress={onReset} />
+        <Dialog.Action
+          title={getString('common.save')}
+          onPress={onSubmitEditing}
+        />
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -133,10 +135,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#FF0033',
     paddingTop: 8,
-  },
-  modalTitle: {
-    fontSize: 24,
-    marginBottom: 16,
   },
   item: {
     borderRadius: 4,
@@ -148,8 +146,8 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   flex: { flex: 1 },
-  marginBottom: { marginBottom: 8 },
-  row: {
-    justifyContent: 'flex-end',
+  colorList: {
+    paddingHorizontal: 20,
+    paddingVertical: 4,
   },
 });

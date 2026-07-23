@@ -13,10 +13,16 @@ export { default as ColorPreferenceItem } from './ColorPreferenceItem/ColorPrefe
 export { default as LoadingMoreIndicator } from './LoadingMoreIndicator/LoadingMoreIndicator';
 export { Checkbox } from './Checkbox/Checkbox';
 export { RadioButton } from './RadioButton/RadioButton';
+export { Dialog } from './Dialog';
+export type {
+  DialogActionProps,
+  DialogActionTone,
+  DialogRootProps,
+  DialogSectionProps,
+  DialogTextProps,
+} from './Dialog';
 export { default as ConfirmationDialog } from './ConfirmationDialog/ConfirmationDialog';
 export { default as SafeAreaView } from './SafeAreaView/SafeAreaView';
-export { default as Modal } from './Modal/Modal';
 export { SegmentedControl } from './SegmentedControl';
-export { DialogTitle } from './DialogTitle';
 export { default as BottomTabBar } from './BottomTabBar';
 export { default as Menu } from './Menu';

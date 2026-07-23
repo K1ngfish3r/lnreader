@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { Portal, TextInput, ActivityIndicator } from 'react-native-paper';
-import { RadioButton } from '@components/RadioButton/RadioButton';
+import { TextInput, ActivityIndicator } from 'react-native-paper';
+import { Dialog, RadioButton } from '@components';
 
 import { useChapterReaderSettings, useTheme } from '@hooks/persisted';
 import { Voice } from 'expo-speech';
 import { LegendList } from '@legendapp/list/react-native';
-import { Modal } from '@components';
 import { StyleSheet } from 'react-native';
+import { getString } from '@strings/translations';
 
 interface VoicePickerModalProps {
   visible: boolean;
@@ -21,40 +21,38 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
   voices,
 }) => {
   const theme = useTheme();
-  const [searchedVoices, setSearchedVoices] = useState<Voice[]>([]);
   const [searchText, setSearchText] = useState('');
   const { setChapterReaderSettings, tts } = useChapterReaderSettings();
+  const filteredVoices = useMemo(() => {
+    const normalizedSearch = searchText.toLocaleLowerCase();
+    return normalizedSearch
+      ? voices.filter(voice =>
+          voice.name.toLocaleLowerCase().includes(normalizedSearch),
+        )
+      : voices;
+  }, [searchText, voices]);
 
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={[styles.containerStyle]}
-      >
+    <Dialog.Root
+      visible={visible}
+      onDismiss={onDismiss}
+      surfaceStyle={styles.containerStyle}
+    >
+      <Dialog.Title>Select voice</Dialog.Title>
+      <Dialog.Content>
+        <TextInput
+          mode="outlined"
+          underlineColor={theme.outline}
+          theme={{ colors: { ...theme } }}
+          onChangeText={setSearchText}
+          value={searchText}
+          placeholder="Search voice"
+        />
+      </Dialog.Content>
+      <Dialog.ScrollArea style={styles.list}>
         <LegendList
           recycleItems
-          ListHeaderComponent={
-            <TextInput
-              mode="outlined"
-              underlineColor={theme.outline}
-              theme={{ colors: { ...theme } }}
-              onChangeText={text => {
-                setSearchText(text);
-                setSearchedVoices(
-                  voices.filter(voice =>
-                    voice.name
-                      .toLocaleLowerCase()
-                      .includes(text.toLocaleLowerCase()),
-                  ),
-                );
-              }}
-              value={searchText}
-              placeholder="Search voice"
-            />
-          }
-          ListHeaderComponentStyle={styles.paddingHorizontal}
-          data={searchText ? searchedVoices : voices}
+          data={filteredVoices}
           extraData={tts?.voice}
           renderItem={({ item }) => (
             <RadioButton
@@ -80,8 +78,13 @@ const VoicePickerModal: React.FC<VoicePickerModalProps> = ({
             />
           }
         />
-      </Modal>
-    </Portal>
+      </Dialog.ScrollArea>
+      <Dialog.Actions>
+        <Dialog.Action onPress={onDismiss}>
+          {getString('common.ok')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
@@ -91,6 +94,8 @@ const styles = StyleSheet.create({
   containerStyle: {
     flex: 1,
   },
-  paddingHorizontal: { paddingHorizontal: 12 },
+  list: {
+    flex: 1,
+  },
   marginTop: { marginTop: 16 },
 });

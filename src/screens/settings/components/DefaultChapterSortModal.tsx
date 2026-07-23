@@ -1,12 +1,9 @@
-import React from 'react';
-
-import { Portal } from 'react-native-paper';
 import { SortItem } from '@components/Checkbox/Checkbox';
 
 import { ThemeColors } from '@theme/types';
 import { AppSettings } from '@hooks/persisted/useSettings';
 import { getString } from '@strings/translations';
-import { Modal } from '@components';
+import { Dialog } from '@components';
 import { ChapterOrderKey } from '@database/constants';
 
 interface DefaultChapterSortModalProps {
@@ -25,8 +22,11 @@ const DefaultChapterSortModal = ({
   displayModalVisible,
 }: DefaultChapterSortModalProps) => {
   return (
-    <Portal>
-      <Modal visible={displayModalVisible} onDismiss={hideDisplayModal}>
+    <Dialog.Root visible={displayModalVisible} onDismiss={hideDisplayModal}>
+      <Dialog.Title>
+        {getString('generalSettingsScreen.chapterSort')}
+      </Dialog.Title>
+      <Dialog.List>
         <SortItem
           label={getString('generalSettingsScreen.bySource')}
           theme={theme}
@@ -41,8 +41,13 @@ const DefaultChapterSortModal = ({
                 })
           }
         />
-      </Modal>
-    </Portal>
+      </Dialog.List>
+      <Dialog.Actions>
+        <Dialog.Action onPress={hideDisplayModal}>
+          {getString('common.ok')}
+        </Dialog.Action>
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 

@@ -1,8 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { Button, Dialog } from 'react-native-paper';
 
-import { RadioButton } from '@components';
+import { Dialog, RadioButton } from '@components';
 
 import { getString } from '@strings/translations';
 import { useTheme } from '@hooks/persisted';
@@ -27,36 +26,29 @@ const DefaultCategoryDialog: React.FC<DefaultCategoryDialogProps> = ({
   const theme = useTheme();
 
   return (
-    <Dialog
-      visible={visible}
-      onDismiss={hideDialog}
-      style={{ backgroundColor: theme.overlay3 }}
-    >
-      <Dialog.Title style={{ color: theme.onSurface }}>
-        {getString('categories.defaultCategory')}
-      </Dialog.Title>
-      <FlatList
-        style={styles.scrollArea}
-        initialNumToRender={10}
-        data={categories}
-        renderItem={({ item }) => (
-          <RadioButton
-            status={item.id === defaultCategoryId}
-            label={item.name}
-            onPress={() => setDefaultCategory(item.id)}
-            theme={theme}
-          />
-        )}
-      />
+    <Dialog.Root visible={visible} onDismiss={hideDialog}>
+      <Dialog.Title>{getString('categories.defaultCategory')}</Dialog.Title>
+      <Dialog.ScrollArea>
+        <FlatList
+          style={styles.scrollArea}
+          initialNumToRender={10}
+          data={categories}
+          renderItem={({ item }) => (
+            <RadioButton
+              status={item.id === defaultCategoryId}
+              label={item.name}
+              onPress={() => setDefaultCategory(item.id)}
+              theme={theme}
+            />
+          )}
+        />
+      </Dialog.ScrollArea>
       <Dialog.Actions>
-        <Button
-          theme={{ colors: { primary: theme.primary } }}
-          onPress={hideDialog}
-        >
+        <Dialog.Action onPress={hideDialog}>
           {getString('common.cancel')}
-        </Button>
+        </Dialog.Action>
       </Dialog.Actions>
-    </Dialog>
+    </Dialog.Root>
   );
 };
 

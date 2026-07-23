@@ -3,15 +3,11 @@ import {
   displayModesList,
 } from '@screens/library/constants/constants';
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
 
-import { Portal } from 'react-native-paper';
-
-import { RadioButton } from '@components/RadioButton/RadioButton';
+import { Dialog, RadioButton } from '@components';
 import { ThemeColors } from '@theme/types';
 import { useLibrarySettings } from '@hooks/persisted';
 import { getString } from '@strings/translations';
-import { Modal } from '@components';
 
 interface DisplayModeModalProps {
   displayMode: DisplayModes;
@@ -29,11 +25,11 @@ const DisplayModeModal: React.FC<DisplayModeModalProps> = ({
   const { setLibrarySettings } = useLibrarySettings();
 
   return (
-    <Portal>
-      <Modal visible={displayModalVisible} onDismiss={hideDisplayModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
-          {getString('generalSettingsScreen.displayMode')}
-        </Text>
+    <Dialog.Root visible={displayModalVisible} onDismiss={hideDisplayModal}>
+      <Dialog.Title>
+        {getString('generalSettingsScreen.displayMode')}
+      </Dialog.Title>
+      <Dialog.List>
         {displayModesList.map(mode => (
           <RadioButton
             key={mode.value}
@@ -43,16 +39,9 @@ const DisplayModeModal: React.FC<DisplayModeModalProps> = ({
             theme={theme}
           />
         ))}
-      </Modal>
-    </Portal>
+      </Dialog.List>
+    </Dialog.Root>
   );
 };
 
 export default DisplayModeModal;
-
-const styles = StyleSheet.create({
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 10,
-  },
-});

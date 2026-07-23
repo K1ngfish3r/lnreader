@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { TextInput, TouchableRipple } from 'react-native-paper';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 
-import { Button, Modal } from '@components';
+import { Dialog } from '@components';
 import { getTracker, useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { SearchResult } from '@services/Trackers';
@@ -118,63 +118,59 @@ const TrackSearchDialog: React.FC<TrackSearchDialogProps> = ({
   );
 
   return (
-    <Modal visible={visible} onDismiss={onDismiss}>
-      <TextInput
-        value={searchText}
-        onChangeText={setSearchText}
-        onSubmitEditing={getSearchResults}
-        textColor={theme.onSurface}
-        theme={{
-          colors: {
-            primary: theme.primary,
-            text: theme.onSurface,
-          },
-        }}
-        style={styles.textInput}
-        underlineColor={theme.outline}
-        right={
-          <TextInput.Icon
-            color={theme.onSurfaceVariant}
-            icon="close"
-            onPress={handleClearSearch}
-          />
-        }
-      />
-      <ScrollView style={styles.scrollView}>
-        {loading ? (
-          <ActivityIndicator
-            color={theme.primary}
-            size={45}
-            style={styles.loader}
-          />
-        ) : (
-          searchResults.map(renderSearchResultCard)
-        )}
-      </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button onPress={handleRemoveSelection}>
-          {getString('common.remove')}
-        </Button>
-        <View style={styles.actionButtons}>
-          <Button onPress={onDismiss}>{getString('common.cancel')}</Button>
-          <Button onPress={handleConfirm}>OK</Button>
-        </View>
-      </View>
-    </Modal>
+    <Dialog.Root visible={visible} onDismiss={onDismiss}>
+      <Dialog.Title>{tracker.name}</Dialog.Title>
+      <Dialog.Content>
+        <TextInput
+          value={searchText}
+          onChangeText={setSearchText}
+          onSubmitEditing={getSearchResults}
+          textColor={theme.onSurface}
+          theme={{
+            colors: {
+              primary: theme.primary,
+              text: theme.onSurface,
+            },
+          }}
+          style={styles.textInput}
+          underlineColor={theme.outline}
+          right={
+            <TextInput.Icon
+              color={theme.onSurfaceVariant}
+              icon="close"
+              onPress={handleClearSearch}
+            />
+          }
+        />
+      </Dialog.Content>
+      <Dialog.ScrollArea>
+        <ScrollView style={styles.scrollView}>
+          {loading ? (
+            <ActivityIndicator
+              color={theme.primary}
+              size={45}
+              style={styles.loader}
+            />
+          ) : (
+            searchResults.map(renderSearchResultCard)
+          )}
+        </ScrollView>
+      </Dialog.ScrollArea>
+      <Dialog.Actions>
+        <Dialog.Action
+          title={getString('common.remove')}
+          onPress={handleRemoveSelection}
+        />
+        <Dialog.Action title={getString('common.cancel')} onPress={onDismiss} />
+        <Dialog.Action title="OK" onPress={handleConfirm} />
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default TrackSearchDialog;
 
 const styles = StyleSheet.create({
-  actionButtons: {
-    flexDirection: 'row',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
   checkIcon: {
     position: 'absolute',
     right: 8,

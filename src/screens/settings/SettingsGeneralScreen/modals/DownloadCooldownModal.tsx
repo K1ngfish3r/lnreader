@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { Portal, TouchableRipple } from 'react-native-paper';
+import { StyleSheet, Text, TextInput } from 'react-native';
 
-import { Modal } from '@components';
+import { Dialog } from '@components';
 import { useAppSettings } from '@hooks/persisted';
 import { DEFAULT_CHAPTER_DOWNLOAD_COOLDOWN_MS } from '@hooks/persisted/useSettings';
 import { getString } from '@strings/translations';
@@ -75,14 +74,16 @@ const DownloadCooldownModal: React.FC<DownloadCooldownModalProps> = ({
   };
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={hideModal}>
-        <Text style={[styles.modalHeader, { color: theme.onSurface }]}>
+    <Dialog.Root visible={visible} onDismiss={hideModal}>
+      <Dialog.Header>
+        <Dialog.Title>
           {getString('generalSettingsScreen.chapterDownloadCooldown')}
-        </Text>
-        <Text style={[styles.modalDesc, { color: theme.onSurfaceVariant }]}>
+        </Dialog.Title>
+        <Dialog.Description>
           {getString('generalSettingsScreen.chapterDownloadCooldownDesc')}
-        </Text>
+        </Dialog.Description>
+      </Dialog.Header>
+      <Dialog.Content>
         <TextInput
           value={draft}
           onChangeText={text => setDraft(sanitizeNumericInput(text))}
@@ -101,44 +102,18 @@ const DownloadCooldownModal: React.FC<DownloadCooldownModalProps> = ({
         <Text style={[styles.warning, { color: theme.error }]}>
           {getString('generalSettingsScreen.chapterDownloadCooldownWarning')}
         </Text>
-        <View style={styles.actions}>
-          <TouchableRipple
-            onPress={reset}
-            borderless
-            style={styles.actionButton}
-            rippleColor={theme.rippleColor}
-          >
-            <Text style={[styles.actionLabel, { color: theme.primary }]}>
-              {getString('common.reset')}
-            </Text>
-          </TouchableRipple>
-          <TouchableRipple
-            onPress={save}
-            borderless
-            style={styles.actionButton}
-            rippleColor={theme.rippleColor}
-          >
-            <Text style={[styles.actionLabel, { color: theme.primary }]}>
-              {getString('common.ok')}
-            </Text>
-          </TouchableRipple>
-        </View>
-      </Modal>
-    </Portal>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Dialog.Action title={getString('common.reset')} onPress={reset} />
+        <Dialog.Action title={getString('common.ok')} onPress={save} />
+      </Dialog.Actions>
+    </Dialog.Root>
   );
 };
 
 export default DownloadCooldownModal;
 
 const styles = StyleSheet.create({
-  modalHeader: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  modalDesc: {
-    fontSize: 14,
-    marginBottom: 16,
-  },
   input: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -149,20 +124,5 @@ const styles = StyleSheet.create({
   warning: {
     fontSize: 12,
     marginTop: 12,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingTop: 16,
-  },
-  actionButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  actionLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    textTransform: 'uppercase',
   },
 });
