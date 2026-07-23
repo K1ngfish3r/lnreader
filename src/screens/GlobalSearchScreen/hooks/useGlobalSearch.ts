@@ -3,7 +3,10 @@ import { debounce } from 'lodash-es';
 
 import { NovelItem, PluginItem } from '@plugins/types';
 import { getPlugin } from '@plugins/pluginManager';
-import { useBrowseSettings, usePlugins } from '@hooks/persisted';
+import {
+  useBrowseSettings,
+  useFilteredInstalledPlugins,
+} from '@hooks/persisted';
 import { useFocusEffect } from '@react-navigation/native';
 
 interface Props {
@@ -39,7 +42,7 @@ export const useGlobalSearch = ({
     }, []),
   );
 
-  const { filteredInstalledPlugins } = usePlugins();
+  const filteredInstalledPlugins = useFilteredInstalledPlugins();
 
   const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([]);
   const [progress, setProgress] = useState(0);

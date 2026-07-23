@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { FAB, Portal } from 'react-native-paper';
 
@@ -11,7 +11,7 @@ import {
 } from '@database/queries/RepositoryQueries';
 import { Repository } from '@database/types';
 import { useBackHandler, useBoolean } from '@hooks/index';
-import { usePlugins, useTheme } from '@hooks/persisted';
+import { usePluginActions, useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 
 import AddRepositoryModal from './components/AddRepositoryModal';
@@ -32,7 +32,7 @@ const SettingsBrowseScreen = ({
 }: RespositorySettingsScreenProps) => {
   const theme = useTheme();
   const { bottom, right } = useSafeAreaInsets();
-  const { refreshPlugins } = usePlugins();
+  const { refreshPlugins } = usePluginActions();
 
   const repositories = useLiveQuery(dbManager.select().from(repositorySchema), [
     { table: 'Repository' },

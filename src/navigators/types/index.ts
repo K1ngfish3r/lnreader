@@ -19,6 +19,7 @@ export type RootStackParamList = {
   BrowseMal: undefined;
   BrowseAL: undefined;
   BrowseSettings: undefined;
+  PluginDetails: { pluginId: string };
   GlobalSearchScreen: { searchText?: string };
   Migration: undefined;
   SourceNovels: { pluginId: string };
@@ -132,6 +133,10 @@ export type BrowseALScreenProps = StackScreenProps<
 export type BrowseSettingsScreenProp = StackScreenProps<
   RootStackParamList,
   'BrowseSettings'
+>;
+export type PluginDetailsScreenProps = StackScreenProps<
+  RootStackParamList,
+  'PluginDetails'
 >;
 export type GlobalSearchScreenProps = StackScreenProps<
   RootStackParamList,

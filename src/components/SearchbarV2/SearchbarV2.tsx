@@ -5,9 +5,11 @@ import IconButtonV2 from '../IconButtonV2/IconButtonV2';
 import { ThemeColors } from '../../theme/types';
 import { Menu } from '@components';
 import { MaterialDesignIconName } from '@type/icon';
+import { getString } from '@strings/translations';
 import { Pressable } from 'react-native-gesture-handler';
 
 export interface RightIcon {
+  accessibilityLabel?: string;
   iconName: MaterialDesignIconName;
   color?: string;
   onPress: () => void;
@@ -45,8 +47,8 @@ const Searchbar: React.FC<SearcbarProps> = ({
   onLeftIconPress,
   theme,
 }) => {
-  const searchbarRef = useRef<any>(null);
-  const focusSearchbar = () => searchbarRef.current.focus();
+  const searchbarRef = useRef<TextInput>(null);
+  const focusSearchbar = () => searchbarRef.current?.focus();
   const [extraMenu, showExtraMenu] = useState(false);
 
   const marginTop = 8;
@@ -62,11 +64,17 @@ const Searchbar: React.FC<SearcbarProps> = ({
       ]}
     >
       <Pressable
+        accessible={false}
         onPress={focusSearchbar}
         android_ripple={{ color: theme.rippleColor }}
         style={styles.searchbar}
       >
         <IconButtonV2
+          accessibilityLabel={
+            handleBackAction
+              ? getString('common.back')
+              : getString('common.search')
+          }
           name={handleBackAction ? 'arrow-left' : leftIcon}
           color={theme.onSurface}
           onPress={() => {
@@ -80,16 +88,18 @@ const Searchbar: React.FC<SearcbarProps> = ({
         />
 
         <TextInput
+          accessibilityLabel={placeholder}
           ref={searchbarRef}
           style={[styles.textInput, { color: theme.onSurface }]}
           placeholder={placeholder}
           placeholderTextColor={theme.onSurfaceVariant}
           onChangeText={onChangeText}
           onSubmitEditing={onSubmitEditing}
-          defaultValue={searchText}
+          value={searchText}
         />
         {searchText !== '' ? (
           <IconButtonV2
+            accessibilityLabel={getString('common.clear')}
             name="close"
             color={theme.onSurface}
             onPress={clearSearchbar}
@@ -98,6 +108,7 @@ const Searchbar: React.FC<SearcbarProps> = ({
         ) : null}
         {rightIcons?.map((icon, index) => (
           <IconButtonV2
+            accessibilityLabel={icon.accessibilityLabel}
             key={index}
             name={icon.iconName}
             color={icon.color || theme.onSurface}
@@ -111,6 +122,7 @@ const Searchbar: React.FC<SearcbarProps> = ({
             onDismiss={() => showExtraMenu(false)}
             anchor={
               <IconButtonV2
+                accessibilityLabel={getString('common.moreOptions')}
                 name="dots-vertical"
                 color={theme.onSurface}
                 onPress={() => showExtraMenu(true)}

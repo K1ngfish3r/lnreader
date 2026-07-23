@@ -1,60 +1,138 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { TabView, TabBar } from 'react-native-tab-view';
+import { TabView, TabBar, type TabBarProps } from 'react-native-tab-view';
 import Color from 'color';
 
 import { useSearch } from '@hooks';
-import { usePlugins, useTheme } from '@hooks/persisted';
+import { useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 
-import { EmptyView, SafeAreaView, SearchbarV2 } from '@components';
+import { SafeAreaView, SearchbarV2 } from '@components';
 import { BrowseScreenProps } from '@navigators/types';
-import { AvailableTab } from './components/AvailableTab';
-import { InstalledTab } from './components/InstalledTab';
+import { PluginsTab } from './components/PluginsTab';
+import { SourcesTab } from './components/SourcesTab';
 
-const routes = [
-  { key: 'installedRoute', title: getString('browseScreen.installed') },
-  { key: 'availableRoute', title: getString('browseScreen.available') },
+type BrowseRoute = {
+  key: 'sources' | 'plugins';
+  title: string;
+};
+
+const routes: BrowseRoute[] = [
+  { key: 'sources', title: getString('browseScreen.sources') },
+  { key: 'plugins', title: getString('browseScreen.plugins') },
 ];
 
 const BrowseScreen = ({ navigation }: BrowseScreenProps) => {
   const theme = useTheme();
   const { searchText, setSearchText, clearSearchbar } = useSearch();
-  const { languagesFilter } = usePlugins();
   const layout = useWindowDimensions();
 
   const searchbarActions = useMemo(
     () =>
       [
         {
+          accessibilityLabel: getString('browseScreen.globalSearch'),
           iconName: 'book-search',
           onPress: () => navigation.navigate('GlobalSearchScreen', {}),
-        },
-        {
-          iconName: 'swap-vertical-variant',
-          onPress: () => navigation.navigate('Migration'),
-        },
-        {
-          iconName: 'cog-outline',
-          onPress: () => navigation.navigate('BrowseSettings'),
         },
       ] as const,
     [navigation],
   );
 
-  useEffect(
-    () =>
-      navigation.addListener('tabPress', e => {
-        if (navigation.isFocused()) {
-          e.preventDefault();
-
-          navigation.navigate('GlobalSearchScreen', {});
-        }
-      }),
+  const menuButtons = useMemo(
+    () => [
+      {
+        title: getString('novelScreen.migrate'),
+        onPress: () => navigation.navigate('Migration'),
+      },
+      {
+        title: getString('browseScreen.repositories'),
+        onPress: () =>
+          navigation.navigate('MoreStack', {
+            screen: 'SettingsStack',
+            params: { screen: 'RespositorySettings' },
+          }),
+      },
+      {
+        title: getString('browseSettings'),
+        onPress: () => navigation.navigate('BrowseSettings'),
+      },
+    ],
     [navigation],
   );
 
   const [index, setIndex] = React.useState(0);
+  const openPlugins = useCallback(() => setIndex(1), []);
+  const navigationState = useMemo(() => ({ index, routes }), [index]);
+  const initialLayout = useMemo(
+    () => ({ width: layout.width }),
+    [layout.width],
+  );
+  const indicatorStyle = useMemo(
+    () => ({ backgroundColor: theme.primary, height: 3 }),
+    [theme.primary],
+  );
+  const tabBarStyle = useMemo(
+    () => ({
+      backgroundColor: theme.surface,
+      elevation: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: Color(theme.isDark ? '#FFFFFF' : '#000000')
+        .alpha(0.12)
+        .string(),
+    }),
+    [theme.isDark, theme.surface],
+  );
+  const androidRipple = useMemo(
+    () => ({ color: theme.rippleColor }),
+    [theme.rippleColor],
+  );
+
+  const renderScene = useCallback(
+    ({ route }: { route: BrowseRoute }) => {
+      switch (route.key) {
+        case 'plugins':
+          return (
+            <PluginsTab
+              navigation={navigation}
+              theme={theme}
+              searchText={searchText}
+            />
+          );
+        default:
+          return (
+            <SourcesTab
+              navigation={navigation}
+              onOpenPlugins={openPlugins}
+              theme={theme}
+              searchText={searchText}
+            />
+          );
+      }
+    },
+    [navigation, openPlugins, searchText, theme],
+  );
+
+  const renderTabBar = useCallback(
+    (props: TabBarProps<BrowseRoute>) => (
+      <TabBar
+        {...props}
+        indicatorStyle={indicatorStyle}
+        style={tabBarStyle}
+        inactiveColor={theme.secondary}
+        activeColor={theme.primary}
+        android_ripple={androidRipple}
+      />
+    ),
+    [
+      androidRipple,
+      indicatorStyle,
+      tabBarStyle,
+      theme.primary,
+      theme.secondary,
+    ],
+  );
+
   return (
     <SafeAreaView excludeBottom>
       <SearchbarV2
@@ -65,51 +143,16 @@ const BrowseScreen = ({ navigation }: BrowseScreenProps) => {
         clearSearchbar={clearSearchbar}
         theme={theme}
         rightIcons={searchbarActions}
+        menuButtons={menuButtons}
       />
-      <TabView
-        navigationState={{ index, routes }}
-        initialLayout={{ width: layout.width }}
-        renderScene={({ route }) => {
-          if (languagesFilter.length === 0) {
-            return (
-              <EmptyView
-                icon="(･Д･。"
-                description={getString('browseScreen.listEmpty')}
-                theme={theme}
-              />
-            );
-          }
-          switch (route.key) {
-            case 'availableRoute':
-              return <AvailableTab theme={theme} searchText={searchText} />;
-            default:
-              return (
-                <InstalledTab
-                  navigation={navigation}
-                  theme={theme}
-                  searchText={searchText}
-                />
-              );
-          }
-        }}
+      <TabView<BrowseRoute>
+        navigationState={navigationState}
+        initialLayout={initialLayout}
+        renderScene={renderScene}
         onIndexChange={setIndex}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            indicatorStyle={{ backgroundColor: theme.primary, height: 3 }}
-            style={{
-              backgroundColor: theme.surface,
-              elevation: 0,
-              borderBottomWidth: 1,
-              borderBottomColor: Color(theme.isDark ? '#FFFFFF' : '#000000')
-                .alpha(0.12)
-                .string(),
-            }}
-            inactiveColor={theme.secondary}
-            activeColor={theme.primary}
-            android_ripple={{ color: theme.rippleColor }}
-          />
-        )}
+        renderTabBar={renderTabBar}
+        lazy
+        lazyPreloadDistance={0}
         swipeEnabled={false}
       />
     </SafeAreaView>

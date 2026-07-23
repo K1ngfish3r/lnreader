@@ -26,17 +26,19 @@ const DiscoverCard: React.FC<Props> = ({
   onPress,
 }) => {
   return (
-    <Pressable
-      style={styles.container}
-      onPress={onPress}
-      android_ripple={{ color: theme.rippleColor }}
-    >
-      <View style={styles.flexRow}>
+    <View style={styles.container}>
+      <Pressable
+        accessibilityLabel={`${getString('browse')} ${trackerName}`}
+        accessibilityRole="button"
+        style={[styles.flexRow, styles.mainAction]}
+        onPress={onPress}
+        android_ripple={{ color: theme.rippleColor }}
+      >
         <Image source={icon} style={styles.icon} />
         <View style={styles.details}>
           <Text style={{ color: theme.onSurface }}>{trackerName}</Text>
         </View>
-      </View>
+      </Pressable>
       <View style={styles.flexRow}>
         <Button
           title={getString('browse')}
@@ -44,7 +46,7 @@ const DiscoverCard: React.FC<Props> = ({
           onPress={onPress}
         />
       </View>
-    </Pressable>
+    </View>
   );
 };
 
@@ -69,5 +71,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     height: 40,
     width: 40,
+  },
+  mainAction: {
+    flex: 1,
   },
 });

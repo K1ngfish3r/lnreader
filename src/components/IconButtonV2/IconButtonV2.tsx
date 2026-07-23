@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import Color from 'color';
 
@@ -13,6 +9,7 @@ import { Pressable } from 'react-native-gesture-handler';
 import { PressableEvent } from 'react-native-gesture-handler/lib/typescript/components/Pressable/PressableProps';
 
 type Props = {
+  accessibilityLabel?: string;
   name: MaterialDesignIconName;
   color?: string;
   size?: number;
@@ -24,6 +21,7 @@ type Props = {
 };
 
 const IconButton: React.FC<Props> = ({
+  accessibilityLabel,
   name,
   color,
   size = 24,
@@ -35,6 +33,8 @@ const IconButton: React.FC<Props> = ({
 }) => (
   <View style={[styles.container, style]}>
     <Pressable
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
       style={[styles.pressable, { padding }]}
       onPress={onPress}
       disabled={disabled}

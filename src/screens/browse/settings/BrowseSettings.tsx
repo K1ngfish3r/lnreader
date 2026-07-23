@@ -1,10 +1,10 @@
 import { FlatList, StyleSheet } from 'react-native';
-import React from 'react';
 import { Appbar, List, SwitchItem } from '@components';
 
 import {
   useBrowseSettings,
-  usePlugins,
+  useLanguagesFilter,
+  usePluginActions,
   useTheme,
 } from '@hooks/persisted/index';
 import { getString } from '@strings/translations';
@@ -17,7 +17,8 @@ const BrowseSettings = ({ navigation }: BrowseSettingsScreenProp) => {
   const theme = useTheme();
   const { goBack } = navigation;
 
-  const { languagesFilter, toggleLanguageFilter } = usePlugins();
+  const languagesFilter = useLanguagesFilter();
+  const { toggleLanguageFilter } = usePluginActions();
   const {
     showMyAnimeList,
     showAniList,

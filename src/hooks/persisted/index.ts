@@ -10,7 +10,16 @@ export {
   useChapterGeneralSettings,
   useChapterReaderSettings,
 } from './useSettings';
-export { default as usePlugins } from './usePlugins';
+export {
+  useFilteredAvailablePlugins,
+  useFilteredInstalledPlugins,
+  useInstalledPlugins,
+  useLastUsedPluginId,
+  useLanguagesFilter,
+  usePinnedPlugins,
+  usePluginActions,
+} from './usePlugins';
+export type { PluginActions } from './usePlugins';
 export { getTracker, useTracker } from './useTracker';
 export { useTrackedNovel } from './useTrackedNovel';
 export { deleteCachedNovels } from './useNovel';

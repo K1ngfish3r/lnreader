@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { setStatusBarColor } from '@theme/utils/setBarColor';
-import { useAppSettings, usePlugins, useTheme } from '@hooks/persisted';
+import { useAppSettings, usePluginActions, useTheme } from '@hooks/persisted';
 import { useGithubUpdateChecker } from '@hooks/common/useGithubUpdateChecker';
 
 /**
@@ -27,6 +27,7 @@ import MalTopNovels from '../screens/browse/discover/MalTopNovels';
 import AniListTopNovels from '../screens/browse/discover/AniListTopNovels';
 import NewUpdateDialog from '../components/NewUpdateDialog';
 import BrowseSettings from '../screens/browse/settings/BrowseSettings';
+import PluginDetailsScreen from '../screens/browse/PluginDetailsScreen';
 import WebviewScreen from '@screens/WebviewScreen/WebviewScreen';
 import { RootStackParamList } from './types';
 import { useMMKVBoolean } from 'react-native-mmkv';
@@ -40,7 +41,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const MainNavigator = () => {
   const theme = useTheme();
   const { updateLibraryOnLaunch } = useAppSettings();
-  const { refreshPlugins } = usePlugins();
+  const { refreshPlugins } = usePluginActions();
   const [isOnboarded] = useMMKVBoolean('IS_ONBOARDED');
 
   useEffect(() => {
@@ -111,6 +112,10 @@ const MainNavigator = () => {
             <Stack.Screen name="BrowseMal" component={MalTopNovels} />
             <Stack.Screen name="BrowseAL" component={AniListTopNovels} />
             <Stack.Screen name="BrowseSettings" component={BrowseSettings} />
+            <Stack.Screen
+              name="PluginDetails"
+              component={PluginDetailsScreen}
+            />
             <Stack.Screen
               name="GlobalSearchScreen"
               component={GlobalSearchScreen}

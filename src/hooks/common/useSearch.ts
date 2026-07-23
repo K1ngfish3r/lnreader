@@ -1,20 +1,20 @@
-import { useIsFocused } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const useSearch = (defaultSearchText?: string, clearSearchOnUnfocus = true) => {
-  const isFocused = useIsFocused();
+  const navigation = useNavigation();
 
   const [searchText, setSearchText] = useState<string>(defaultSearchText || '');
 
   const clearSearchbar = useCallback(() => setSearchText(''), []);
 
   useEffect(() => {
-    if (clearSearchOnUnfocus) {
-      if (!isFocused) {
-        clearSearchbar();
-      }
+    if (!clearSearchOnUnfocus) {
+      return;
     }
-  }, [clearSearchbar, clearSearchOnUnfocus, isFocused]);
+
+    return navigation.addListener('blur', clearSearchbar);
+  }, [clearSearchbar, clearSearchOnUnfocus, navigation]);
 
   return useMemo(
     () => ({ searchText, setSearchText, clearSearchbar }),

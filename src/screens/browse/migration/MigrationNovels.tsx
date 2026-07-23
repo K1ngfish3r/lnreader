@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, FlatListProps } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
-import { usePlugins, useTheme } from '@hooks/persisted';
+import { useFilteredInstalledPlugins, useTheme } from '@hooks/persisted';
 
 import EmptyView from '@components/EmptyView';
 import MigrationNovelList from './MigrationNovelList';
@@ -33,7 +33,7 @@ const MigrationNovels = ({ navigation, route }: MigrateNovelScreenProps) => {
 
   const { library } = useLibraryNovels();
 
-  const { filteredInstalledPlugins } = usePlugins();
+  const filteredInstalledPlugins = useFilteredInstalledPlugins();
 
   const getSearchResults = useCallback(async () => {
     setSearchResults(
