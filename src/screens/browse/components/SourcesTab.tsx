@@ -1,6 +1,9 @@
 import { memo, useCallback, useMemo } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { LegendList, LegendListRenderItemProps } from '@legendapp/list';
+import {
+  LegendList,
+  LegendListRenderItemProps,
+} from '@legendapp/list/react-native';
 
 import { EmptyView, IconButtonV2 } from '@components';
 import {

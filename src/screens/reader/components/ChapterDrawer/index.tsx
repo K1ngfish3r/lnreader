@@ -14,7 +14,11 @@ import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import renderListChapter from './RenderListChapter';
 import { useChapterContext } from '@screens/reader/ChapterContext';
-import { LegendList, LegendListRef, ViewToken } from '@legendapp/list';
+import {
+  LegendList,
+  LegendListRef,
+  ViewToken,
+} from '@legendapp/list/react-native';
 import { noop } from 'lodash-es';
 import { useNovelActions, useNovelValue } from '@screens/novel/NovelContext';
 

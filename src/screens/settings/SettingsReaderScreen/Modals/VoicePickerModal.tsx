@@ -5,7 +5,7 @@ import { RadioButton } from '@components/RadioButton/RadioButton';
 
 import { useChapterReaderSettings, useTheme } from '@hooks/persisted';
 import { Voice } from 'expo-speech';
-import { LegendList } from '@legendapp/list';
+import { LegendList } from '@legendapp/list/react-native';
 import { Modal } from '@components';
 import { StyleSheet } from 'react-native';
 

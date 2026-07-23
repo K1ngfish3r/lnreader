@@ -7,7 +7,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import { LegendList, LegendListRenderItemProps } from '@legendapp/list';
+import {
+  LegendList,
+  LegendListRenderItemProps,
+} from '@legendapp/list/react-native';
 
 import { Button, EmptyView, IconButtonV2 } from '@components';
 import {

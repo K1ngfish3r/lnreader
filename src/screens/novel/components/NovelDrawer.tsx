@@ -1,4 +1,7 @@
-import { LegendList, LegendListRenderItemProps } from '@legendapp/list';
+import {
+  LegendList,
+  LegendListRenderItemProps,
+} from '@legendapp/list/react-native';
 import { ThemeColors } from '@theme/types';
 import color from 'color';
 import { Pressable, StyleSheet, View } from 'react-native';

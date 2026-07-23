@@ -28,8 +28,8 @@ import * as Haptics from 'expo-haptics';
 import { AnimatedFAB } from 'react-native-paper';
 import { ChapterListSkeleton } from '@components/Skeleton/Skeleton';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { LegendList, LegendListRef } from '@legendapp/list';
-import NativeFile from '@modules/native-file'
+import { LegendList, LegendListRef } from '@legendapp/list/react-native';
+import NativeFile from '@modules/native-file';
 import { downloadFile } from '@plugins/helpers/fetch';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
 import PagePaginationControl from './PagePaginationControl';

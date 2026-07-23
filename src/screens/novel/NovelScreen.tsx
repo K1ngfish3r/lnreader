@@ -31,7 +31,7 @@ import NovelScreenList from './components/NovelScreenList';
 import { ThemeColors } from '@theme/types';
 import { SafeAreaView } from '@components';
 import { useNovelActions, useNovelValue } from './NovelContext';
-import { LegendListRef } from '@legendapp/list';
+import { LegendListRef } from '@legendapp/list/react-native';
 
 const Novel = ({ route, navigation }: NovelScreenProps) => {
   const novel = useNovelValue('novel');

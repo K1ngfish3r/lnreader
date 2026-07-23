@@ -20,7 +20,7 @@ import {
   LegendList,
   LegendListRef,
   LegendListRenderItemProps,
-} from '@legendapp/list';
+} from '@legendapp/list/react-native';
 import { useNovelAction, useNovelValue } from '../NovelContext';
 
 interface JumpToChapterModalProps {

@@ -66,7 +66,7 @@ jest.mock('../RenderListChapter', () => {
     );
 });
 
-jest.mock('@legendapp/list', () => {
+jest.mock('@legendapp/list/react-native', () => {
   const React = require('react');
   const { Pressable, Text, View } = require('react-native');
 

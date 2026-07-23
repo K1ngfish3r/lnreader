@@ -4,7 +4,10 @@ import {
   BottomSheetView,
   useBottomSheetScrollableCreator,
 } from '@gorhom/bottom-sheet';
-import { LegendList, LegendListRenderItemProps } from '@legendapp/list';
+import {
+  LegendList,
+  LegendListRenderItemProps,
+} from '@legendapp/list/react-native';
 import color from 'color';
 
 import BottomSheet from '@components/BottomSheet/BottomSheet';

@@ -41,7 +41,7 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0 }),
 }));
 
-jest.mock('@legendapp/list', () => {
+jest.mock('@legendapp/list/react-native', () => {
   const React = require('react');
   const { View } = require('react-native');
 
