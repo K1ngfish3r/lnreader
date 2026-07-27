@@ -74,6 +74,12 @@ ext {
     versionPatch = 0
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'net.lingala.zip4j:zip4j:2.11.5'
+    }
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -114,6 +120,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation('net.lingala.zip4j:zip4j:2.11.5')
     implementation 'com.facebook.soloader:soloader:0.10.5+'
     implementation 'androidx.core:core-ktx:1.9.0'
 
