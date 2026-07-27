@@ -118,7 +118,7 @@ const MainNavigator = () => {
   return (
     // @ts-ignore
     <NavigationContainer theme={{ colors: theme, dark: theme.isDark }}>
-      {isNewVersion && <NewUpdateDialog newVersion={latestRelease} />}
+      {false && <NewUpdateDialog newVersion={latestRelease} />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Novel" component={Novel} />
